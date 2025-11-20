@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 // Configuration
 define('RECIPIENT_EMAIL', 'info@jetsetvisas.ae');
-define('RECAPTCHA_SECRET_KEY', '6LeFUwwsAAAAAGWr6uHMDK23PrtNB0M3lPGpA9up');
+define('RECAPTCHA_SECRET_KEY', 'hh');
 define('FROM_EMAIL', 'noreply@jetsetvisas.ae');
 define('FROM_NAME', 'JetSet Visas Contact Form');
 
@@ -208,7 +208,7 @@ try {
         error_log("Contact form submitted successfully from: $email");
     } else {
         throw new Exception('Failed to send email. Please try again later.');
-    }
+    } 
     
 } catch (Exception $e) {
     error_log('Contact form error: ' . $e->getMessage());
