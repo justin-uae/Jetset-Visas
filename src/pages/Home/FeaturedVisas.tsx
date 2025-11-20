@@ -13,9 +13,10 @@ interface VisaCardProps {
     image: string;
     handle: string;
     flag: string;
+    isGCC?: Boolean;
 }
 
-const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, handle, flag }) => {
+const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, handle, flag, isGCC }) => {
     return (
         <Link
             to={`/visas/${handle}`}
@@ -55,7 +56,7 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
 
                 <div className="pt-3 border-t border-gray-200">
                     <span className="text-sm text-accent font-medium group-hover:text-primary transition-colors">
-                        Apply Now →
+                        {isGCC ? `Apply Now →` : `Enquire Now`}
                     </span>
                 </div>
             </div>
@@ -113,6 +114,7 @@ const FeaturedVisasSection: React.FC = () => {
         image: visa.images[0] || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=500',
         handle: visa.handle,
         flag: visa.flag,
+        isGCC: visa.isGCC,
     });
 
     return (

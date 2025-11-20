@@ -127,6 +127,7 @@ function transformShopifyProductToVisa(product: ShopifyProduct): VisaProduct {
         handle: product.handle,
         title: product.title,
         country: metafields.country || '',
+        isGCC: metafields.is_gcc || '',
         flag: metafields.flag_emoji || '🌍',
         category: metafields.category || product.productType,
         duration: metafields.duration || '',

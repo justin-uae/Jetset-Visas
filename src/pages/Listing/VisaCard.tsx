@@ -17,6 +17,7 @@ const VisaCard: React.FC<VisaCardProps> = ({
     processingTime,
     images,
     handle,
+    isGCC,
     popular = false,
 }) => {
     const image = images[0];
@@ -93,7 +94,7 @@ const VisaCard: React.FC<VisaCardProps> = ({
                         </div>
                     </div>
                     <div className="flex items-center text-primary font-semibold group-hover:text-accent transition-colors">
-                        <span className="mr-1">Apply</span>
+                        <span className="mr-1">{isGCC ? `Apply` : `Enquire now`}</span>
                         <FiArrowRight className="transform group-hover:translate-x-1 transition-transform" />
                     </div>
                 </div>

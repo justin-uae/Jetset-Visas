@@ -56,6 +56,7 @@ export interface VisaProduct {
   variants: VisaVariant[];
   tags: string[];
   productType: string;
+  isGCC?: Boolean;
 }
 
 export interface VisaFilters {

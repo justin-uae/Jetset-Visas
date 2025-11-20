@@ -59,6 +59,7 @@ export const GET_ALL_VISAS_QUERY = `
             { namespace: "visa", key: "important_notes" }
             { namespace: "visa", key: "express_available" }
             { namespace: "visa", key: "express_price" }
+            { namespace: "visa", key: "is_gcc" }
           ]) {
             key
             value
@@ -133,6 +134,7 @@ export const GET_VISA_BY_HANDLE_QUERY = `
         { namespace: "visa", key: "important_notes" }
         { namespace: "visa", key: "express_available" }
         { namespace: "visa", key: "express_price" }
+        { namespace: "visa", key: "is_gcc" }
       ]) {
         key
         value
