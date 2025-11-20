@@ -1,14 +1,3 @@
-
-// Visa Categories
-// export const VISA_CATEGORIES = [
-//     { value: 'ALL', label: 'All Visas' },
-//     { value: VisaCategory.UAE, label: 'UAE Visas' },
-//     { value: VisaCategory.SAUDI, label: 'Saudi Arabia Visas' },
-//     { value: VisaCategory.OMAN, label: 'Oman Visas' },
-//     { value: VisaCategory.BAHRAIN, label: 'Bahrain Visas' },
-//     { value: VisaCategory.GLOBAL, label: 'Global Visas' },
-// ] as const;
-
 // GCC Countries
 export const GCC_COUNTRIES = [
     { country: 'UAE', label: 'United Arab Emirates', flag: '🇦🇪' },
@@ -46,6 +35,66 @@ export const GLOBAL_COUNTRIES = [
     { country: 'VIETNAM', label: 'Vietnam', flag: '🇻🇳', processingTime: '5 WORKING DAYS' },
 ] as const;
 
+// Country list with codes
+export const countries = [
+    { code: 'AF', name: 'Afghanistan', dialCode: '+93' },
+    { code: 'AL', name: 'Albania', dialCode: '+355' },
+    { code: 'DZ', name: 'Algeria', dialCode: '+213' },
+    { code: 'AR', name: 'Argentina', dialCode: '+54' },
+    { code: 'AU', name: 'Australia', dialCode: '+61' },
+    { code: 'AT', name: 'Austria', dialCode: '+43' },
+    { code: 'BH', name: 'Bahrain', dialCode: '+973' },
+    { code: 'BD', name: 'Bangladesh', dialCode: '+880' },
+    { code: 'BE', name: 'Belgium', dialCode: '+32' },
+    { code: 'BR', name: 'Brazil', dialCode: '+55' },
+    { code: 'CA', name: 'Canada', dialCode: '+1' },
+    { code: 'CN', name: 'China', dialCode: '+86' },
+    { code: 'EG', name: 'Egypt', dialCode: '+20' },
+    { code: 'FR', name: 'France', dialCode: '+33' },
+    { code: 'DE', name: 'Germany', dialCode: '+49' },
+    { code: 'GR', name: 'Greece', dialCode: '+30' },
+    { code: 'HK', name: 'Hong Kong', dialCode: '+852' },
+    { code: 'IN', name: 'India', dialCode: '+91' },
+    { code: 'ID', name: 'Indonesia', dialCode: '+62' },
+    { code: 'IR', name: 'Iran', dialCode: '+98' },
+    { code: 'IQ', name: 'Iraq', dialCode: '+964' },
+    { code: 'IE', name: 'Ireland', dialCode: '+353' },
+    { code: 'IT', name: 'Italy', dialCode: '+39' },
+    { code: 'JP', name: 'Japan', dialCode: '+81' },
+    { code: 'JO', name: 'Jordan', dialCode: '+962' },
+    { code: 'KW', name: 'Kuwait', dialCode: '+965' },
+    { code: 'LB', name: 'Lebanon', dialCode: '+961' },
+    { code: 'MY', name: 'Malaysia', dialCode: '+60' },
+    { code: 'MX', name: 'Mexico', dialCode: '+52' },
+    { code: 'NL', name: 'Netherlands', dialCode: '+31' },
+    { code: 'NZ', name: 'New Zealand', dialCode: '+64' },
+    { code: 'NG', name: 'Nigeria', dialCode: '+234' },
+    { code: 'NO', name: 'Norway', dialCode: '+47' },
+    { code: 'OM', name: 'Oman', dialCode: '+968' },
+    { code: 'PK', name: 'Pakistan', dialCode: '+92' },
+    { code: 'PH', name: 'Philippines', dialCode: '+63' },
+    { code: 'PL', name: 'Poland', dialCode: '+48' },
+    { code: 'PT', name: 'Portugal', dialCode: '+351' },
+    { code: 'QA', name: 'Qatar', dialCode: '+974' },
+    { code: 'RU', name: 'Russia', dialCode: '+7' },
+    { code: 'SA', name: 'Saudi Arabia', dialCode: '+966' },
+    { code: 'SG', name: 'Singapore', dialCode: '+65' },
+    { code: 'ZA', name: 'South Africa', dialCode: '+27' },
+    { code: 'KR', name: 'South Korea', dialCode: '+82' },
+    { code: 'ES', name: 'Spain', dialCode: '+34' },
+    { code: 'LK', name: 'Sri Lanka', dialCode: '+94' },
+    { code: 'SE', name: 'Sweden', dialCode: '+46' },
+    { code: 'CH', name: 'Switzerland', dialCode: '+41' },
+    { code: 'SY', name: 'Syria', dialCode: '+963' },
+    { code: 'TW', name: 'Taiwan', dialCode: '+886' },
+    { code: 'TH', name: 'Thailand', dialCode: '+66' },
+    { code: 'TR', name: 'Turkey', dialCode: '+90' },
+    { code: 'AE', name: 'United Arab Emirates', dialCode: '+971' },
+    { code: 'GB', name: 'United Kingdom', dialCode: '+44' },
+    { code: 'US', name: 'United States', dialCode: '+1' },
+    { code: 'VN', name: 'Vietnam', dialCode: '+84' },
+    { code: 'YE', name: 'Yemen', dialCode: '+967' }
+];
 
 // Duration Options (most common from price list)
 export const DURATION_OPTIONS = [

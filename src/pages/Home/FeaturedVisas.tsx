@@ -24,6 +24,7 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
             <div className="relative h-48 overflow-hidden">
                 <img
                     src={image}
+                    loading='lazy'
                     alt={title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
@@ -128,9 +129,6 @@ const FeaturedVisasSection: React.FC = () => {
                                 }`}
                         >
                             Popular Visas
-                            {!loading && popularVisas.length > 0 && (
-                                <span className="ml-2 text-xs">({popularVisas.length})</span>
-                            )}
                         </button>
                         <button
                             onClick={() => setActiveTab('featured')}
@@ -140,9 +138,6 @@ const FeaturedVisasSection: React.FC = () => {
                                 }`}
                         >
                             Featured Visas
-                            {!loading && featuredVisas.length > 0 && (
-                                <span className="ml-2 text-xs">({featuredVisas.length})</span>
-                            )}
                         </button>
                     </div>
                 </div>

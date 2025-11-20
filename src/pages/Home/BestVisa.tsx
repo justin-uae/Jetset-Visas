@@ -23,6 +23,7 @@ const CityCard: React.FC<CityCardProps> = ({ name, image, route, flag }) => {
                 {/* Background Image */}
                 <img
                     src={image}
+                    loading='lazy'
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />

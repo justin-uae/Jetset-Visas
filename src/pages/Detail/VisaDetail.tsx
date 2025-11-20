@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading } from '../../redux/slices/visaSlice';
 import { addToCart } from '../../redux/slices/cartSlice';
 import type { VisaVariant } from '../../types/visa-types';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const VisaDetail: React.FC = () => {
     const { handle } = useParams<{ handle: string }>();
@@ -117,6 +118,17 @@ const VisaDetail: React.FC = () => {
         navigate('/cart');
     };
 
+    const handleWhatsAppInquiry = () => {
+        if (!visa) return;
+
+        const phoneNumber = `${import.meta.env.VITE_CONTACT_NUMBER}`; // UAE format: 971 + number without leading zero
+        const message = `Hi! I'm interested in booking this Visa`;
+        const encodedMessage = encodeURIComponent(message);
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+        window.open(whatsappUrl, '_blank');
+    };
+
+
     return (
         <div className="min-h-screen bg-gray-50 pb-24 lg:pb-8">
             {/* Breadcrumb */}
@@ -162,6 +174,7 @@ const VisaDetail: React.FC = () => {
                                         >
                                             <img
                                                 src={img}
+                                                loading='lazy'
                                                 alt={`${visa.title} ${index + 1}`}
                                                 className="w-full h-full object-cover"
                                             />
@@ -456,6 +469,13 @@ const VisaDetail: React.FC = () => {
                             >
                                 <FiShoppingCart className="mr-2" size={20} />
                                 Add to Cart
+                            </button>
+                            <button
+                                onClick={handleWhatsAppInquiry}
+                                className="w-full bg-gradient-to-r bg-primary text-white font-bold py-3 sm:py-4 text-sm sm:text-base rounded-lg sm:rounded-xl transition-all transform hover:scale-105 shadow-lg shadow-primary-500/30 flex items-center justify-center gap-2"
+                            >
+                                Inquire via WhatsApp
+                                <FaWhatsapp className="w-5 h-5" />
                             </button>
 
                             {/* Contact Support */}

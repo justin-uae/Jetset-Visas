@@ -52,6 +52,7 @@ const Header: React.FC = () => {
                         <img
                             src="/favicon.png"
                             alt="JetSet Logo"
+                            loading='lazy'
                             className="h-10 sm:h-12 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
                         />
                         {/* Visas Text */}

@@ -281,7 +281,6 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
                                             : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent'
                                     }`}
                                 >
-                                    <span className="mr-2 flex-shrink-0">{type.flag}</span>
                                     <span className="text-xs sm:text-sm font-medium">{type.label}</span>
                                 </button>
                             ))}

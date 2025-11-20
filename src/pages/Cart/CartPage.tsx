@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FiTrash2,
@@ -14,27 +14,37 @@ import {
   FiGlobe,
   FiCalendar,
   FiFileText,
-  FiAlertCircle
+  FiAlertCircle,
+  FiLogIn,
+  FiUserPlus,
+  FiLoader
 } from 'react-icons/fi';
 import { useAppSelector, useAppDispatch } from '../../redux/hooks';
-import { removeFromCart, updateQuantity } from '../../redux/slices/cartSlice';
+import { removeFromCart, updateQuantity, clearCart } from '../../redux/slices/cartSlice';
+import { createShopifyCheckout, clearCheckoutError } from '../../redux/slices/checkoutSlice';
+import { countries } from '../../constants/visaConstants';
 
 interface ApplicantForm {
   firstName: string;
   lastName: string;
   gender: string;
   dateOfBirth: string;
+  passportNumber: string;
   nationality: string;
   email: string;
+  phoneCountryCode: string;
   phoneNumber: string;
   specialRequest: string;
 }
+
 
 const VisaCartPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector((state) => state.cart.items);
+  const { isLoading: isSubmitting, error: checkoutError, checkoutUrl } = useAppSelector((state) => state.checkout);
 
+  const [showLoginOptions, setShowLoginOptions] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [applicants, setApplicants] = useState<ApplicantForm[]>([
     {
@@ -42,14 +52,44 @@ const VisaCartPage: React.FC = () => {
       lastName: '',
       gender: '',
       dateOfBirth: '',
+      passportNumber: '',
       nationality: '',
       email: '',
+      phoneCountryCode: '+971',
       phoneNumber: '',
       specialRequest: ''
     }
   ]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+
+  // Handle checkout redirect when checkoutUrl is available
+  useEffect(() => {
+    if (checkoutUrl) {
+      // Clear cart
+      dispatch(clearCart());
+
+      // Redirect to Shopify checkout
+      window.location.href = checkoutUrl;
+    }
+  }, [checkoutUrl, dispatch]);
+
+  // Clear checkout error when component unmounts
+  useEffect(() => {
+    return () => {
+      dispatch(clearCheckoutError());
+    };
+  }, [dispatch]);
+
+  // Helper function to get the correct price for an item
+  const getItemPrice = (item: any) => {
+    return item.selectedVariant?.price ?? item.visa.price;
+  };
+
+  // Helper function to get variant display name
+  const getVariantName = (item: any) => {
+    return item.selectedVariant?.title || null;
+  };
 
   const handleUpdateQuantity = (itemId: string, change: number) => {
     const item = cartItems.find(i => i.visa.id === itemId);
@@ -65,8 +105,10 @@ const VisaCartPage: React.FC = () => {
             lastName: '',
             gender: '',
             dateOfBirth: '',
+            passportNumber: '',
             nationality: '',
             email: '',
+            phoneCountryCode: '+971',
             phoneNumber: '',
             specialRequest: ''
           });
@@ -114,7 +156,10 @@ const VisaCartPage: React.FC = () => {
       if (!applicant.dateOfBirth) {
         newErrors[`applicant${index}_dateOfBirth`] = 'Date of birth is required';
       }
-      if (!applicant.nationality.trim()) {
+      if (!applicant.passportNumber.trim()) {
+        newErrors[`applicant${index}_passportNumber`] = 'Passport number is required';
+      }
+      if (!applicant.nationality) {
         newErrors[`applicant${index}_nationality`] = 'Nationality is required';
       }
       if (!applicant.email.trim()) {
@@ -136,32 +181,39 @@ const VisaCartPage: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
+    setShowLoginOptions(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleGuestCheckout = () => {
+    setShowLoginOptions(false);
     setShowCheckoutForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSubmitCheckout = () => {
-    if (validateForm()) {
-      console.log('Checkout data:', {
-        cartItems,
-        applicants,
-        total: calculateTotal()
-      });
+  const handleLoginRedirect = () => {
+    navigate('/login');
+  };
 
-      alert('Order submitted successfully! Redirecting to payment...');
-    } else {
+  const handleSubmitCheckout = () => {
+    if (!validateForm()) {
       alert('Please fill in all required fields');
       const firstErrorKey = Object.keys(errors)[0];
       const element = document.getElementById(firstErrorKey);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+      return;
     }
+
+    // Dispatch Redux thunk to create checkout
+    dispatch(createShopifyCheckout({ cartItems, applicants }));
   };
 
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => {
-      let itemTotal = item.visa.price * item.quantity;
+      const basePrice = getItemPrice(item);
+      let itemTotal = basePrice * item.quantity;
       if (item.addons) {
         item.addons.forEach(addon => {
           itemTotal += addon.price * item.quantity;
@@ -172,8 +224,7 @@ const VisaCartPage: React.FC = () => {
   };
 
   const subtotal = calculateSubtotal();
-  const serviceFee = 25;
-  const calculateTotal = () => subtotal + serviceFee;
+  const calculateTotal = () => subtotal;
 
   const totalApplicants = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -184,7 +235,7 @@ const VisaCartPage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
-              {showCheckoutForm ? 'Checkout' : 'Your Cart'}
+              {showCheckoutForm ? 'Checkout' : showLoginOptions ? 'Login or Continue' : 'Your Cart'}
             </h1>
             <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600">
               <FiShield className="w-3 h-3 sm:w-4 sm:h-4 text-green-600" />
@@ -211,91 +262,179 @@ const VisaCartPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {/* Left Column - Cart Items or Checkout Form */}
+            {/* Left Column - Cart Items, Login Options, or Checkout Form */}
             <div className="lg:col-span-2 space-y-3 sm:space-y-4">
-              {!showCheckoutForm ? (
+              {!showLoginOptions && !showCheckoutForm ? (
                 <>
                   {/* Cart Items */}
-                  {cartItems.map((item) => (
-                    <div key={item.visa.id} className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
-                      <div className="flex gap-3 sm:gap-4">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0">
-                          <img
-                            src={item?.visa?.images[0]}
-                            alt={`${item.visa?.title}`}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
+                  {cartItems.map((item) => {
+                    const itemPrice = getItemPrice(item);
+                    const variantName = getVariantName(item);
+                    const addonTotal = item.addons?.reduce((sum, addon) => sum + addon.price, 0) || 0;
+                    const totalItemPrice = (itemPrice + addonTotal) * item.quantity;
+                    const pricePerUnit = itemPrice + addonTotal;
 
-                        <div className="flex-1 min-w-0">
-                          <div className="flex justify-between items-start mb-2">
-                            <div className="flex-1 pr-2">
-                              <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 line-clamp-2">
-                                {item.visa.title}
-                              </h3>
-                              <p className="text-xs sm:text-sm text-gray-600">{item.visa.country}</p>
-                            </div>
-                            <button
-                              onClick={() => handleRemoveItem(item.visa.id)}
-                              className="text-gray-400 hover:text-red-600 transition p-1 flex-shrink-0"
-                            >
-                              <FiTrash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-                            </button>
+                    return (
+                      <div key={item.visa.id} className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                        <div className="flex gap-3 sm:gap-4">
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0">
+                            <img
+                              src={item?.visa?.images[0]}
+                              loading='lazy'
+                              alt={`${item.visa?.title}`}
+                              className="w-full h-full object-cover"
+                            />
                           </div>
 
-                          <div className="space-y-1 mb-3">
-                            <div className="flex items-center text-xs sm:text-sm text-gray-600">
-                              <FiCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">{item.visa.entryType} - {item.visa.duration}</span>
-                            </div>
-                            <div className="flex items-center text-xs sm:text-sm text-gray-600">
-                              <FiClock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
-                              <span className="truncate">{item.visa.processingTime}</span>
-                            </div>
-                            {item.addons && item.addons.length > 0 && (
-                              <div className="text-xs sm:text-sm text-primary font-medium truncate">
-                                + {item.addons.map(a => a.title).join(', ')}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex justify-between items-start mb-2">
+                              <div className="flex-1 pr-2">
+                                <h3 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900 line-clamp-2">
+                                  {item.visa.title}
+                                </h3>
+                                <p className="text-xs sm:text-sm text-gray-600">{item.visa.country}</p>
+                                {variantName && (
+                                  <p className="text-xs sm:text-sm text-primary font-medium mt-1">
+                                    {variantName}
+                                  </p>
+                                )}
                               </div>
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between gap-3">
-                            <div className="flex items-center border rounded-lg">
                               <button
-                                onClick={() => handleUpdateQuantity(item.visa.id, -1)}
-                                className="p-1.5 sm:p-2 hover:bg-gray-100 transition"
-                                disabled={item.quantity <= 1}
+                                onClick={() => handleRemoveItem(item.visa.id)}
+                                className="text-gray-400 hover:text-red-600 transition p-1 flex-shrink-0"
                               >
-                                <FiMinus className="w-3 h-3 sm:w-4 sm:h-4" />
-                              </button>
-                              <span className="px-2 sm:px-4 font-semibold text-sm sm:text-base">{item.quantity}</span>
-                              <button
-                                onClick={() => handleUpdateQuantity(item.visa.id, 1)}
-                                className="p-1.5 sm:p-2 hover:bg-gray-100 transition"
-                              >
-                                <FiPlus className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <FiTrash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
                             </div>
-                            <div className="text-right">
-                              <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
-                                AED {(item.visa.price + (item.addons?.reduce((sum, addon) => sum + addon.price, 0) || 0)) * item.quantity}
-                              </p>
-                              {item.quantity > 1 && (
-                                <p className="text-xs sm:text-sm text-gray-600">
-                                  AED {item.visa.price + (item.addons?.reduce((sum, addon) => sum + addon.price, 0) || 0)} each
-                                </p>
+
+                            <div className="space-y-1 mb-3">
+                              <div className="flex items-center text-xs sm:text-sm text-gray-600">
+                                <FiCheckCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">{item.visa.entryType} - {item.visa.duration}</span>
+                              </div>
+                              <div className="flex items-center text-xs sm:text-sm text-gray-600">
+                                <FiClock className="w-3 h-3 sm:w-4 sm:h-4 mr-2 flex-shrink-0" />
+                                <span className="truncate">{item.visa.processingTime}</span>
+                              </div>
+                              {item.addons && item.addons.length > 0 && (
+                                <div className="text-xs sm:text-sm text-primary font-medium truncate">
+                                  + {item.addons.map(a => a.title).join(', ')}
+                                </div>
                               )}
+                            </div>
+
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="flex items-center border rounded-lg">
+                                <button
+                                  onClick={() => handleUpdateQuantity(item.visa.id, -1)}
+                                  className="p-1.5 sm:p-2 hover:bg-gray-100 transition"
+                                  disabled={item.quantity <= 1}
+                                >
+                                  <FiMinus className="w-3 h-3 sm:w-4 sm:h-4" />
+                                </button>
+                                <span className="px-2 sm:px-4 font-semibold text-sm sm:text-base">{item.quantity}</span>
+                                <button
+                                  onClick={() => handleUpdateQuantity(item.visa.id, 1)}
+                                  className="p-1.5 sm:p-2 hover:bg-gray-100 transition"
+                                >
+                                  <FiPlus className="w-3 h-3 sm:w-4 sm:h-4" />
+                                </button>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                                  AED {totalItemPrice}
+                                </p>
+                                {item.quantity > 1 && (
+                                  <p className="text-xs sm:text-sm text-gray-600">
+                                    AED {pricePerUnit} each
+                                  </p>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
+                    );
+                  })}
+                </>
+              ) : showLoginOptions ? (
+                <>
+                  {/* Login or Guest Checkout Options */}
+                  <div className="bg-white rounded-lg shadow-sm p-6 sm:p-8">
+                    <div className="max-w-md mx-auto">
+                      <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 text-center">
+                        Choose how to continue
+                      </h2>
+                      <p className="text-sm sm:text-base text-gray-600 mb-8 text-center">
+                        Login to save your order history or continue as a guest
+                      </p>
+
+                      {/* Login Button */}
+                      <button
+                        onClick={handleLoginRedirect}
+                        className="w-full bg-primary text-white py-3 sm:py-4 rounded-lg font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-3 mb-4 text-sm sm:text-base"
+                      >
+                        <FiLogIn className="w-5 h-5" />
+                        Login to Your Account
+                      </button>
+
+                      {/* Divider */}
+                      <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                          <span className="px-4 bg-white text-gray-500">OR</span>
+                        </div>
+                      </div>
+
+                      {/* Guest Checkout Button */}
+                      <button
+                        onClick={handleGuestCheckout}
+                        className="w-full bg-gray-100 text-gray-900 py-3 sm:py-4 rounded-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center gap-3 text-sm sm:text-base"
+                      >
+                        <FiUserPlus className="w-5 h-5" />
+                        Continue as Guest
+                      </button>
+
+                      {/* Benefits of Login */}
+                      <div className="mt-8 p-4 bg-blue-50 rounded-lg">
+                        <h4 className="font-semibold text-gray-900 mb-2 text-sm">Benefits of logging in:</h4>
+                        <ul className="text-xs sm:text-sm text-gray-600 space-y-1">
+                          <li className="flex items-start gap-2">
+                            <FiCheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <span>Track your visa application status</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <FiCheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <span>Access your order history</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <FiCheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                            <span>Save applicant information for faster checkout</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </>
               ) : (
                 <>
                   {/* Checkout Form */}
                   <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                    {/* Error Message */}
+                    {checkoutError && (
+                      <div className="mb-4 sm:mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                        <div className="flex items-start">
+                          <FiAlertCircle className="text-red-600 mr-3 mt-0.5 flex-shrink-0 w-5 h-5" />
+                          <div>
+                            <h4 className="text-sm font-semibold text-red-900 mb-1">Checkout Error</h4>
+                            <p className="text-sm text-red-700">{checkoutError}</p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
                       <h2 className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">Applicant Information</h2>
                       <span className="text-xs sm:text-sm text-gray-600">
@@ -397,22 +536,49 @@ const VisaCartPage: React.FC = () => {
                             )}
                           </div>
 
+                          {/* Passport Number */}
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
+                              Passport Number *
+                            </label>
+                            <div className="relative">
+                              <FiFileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                              <input
+                                id={`applicant${index}_passportNumber`}
+                                type="text"
+                                value={applicant.passportNumber}
+                                onChange={(e) => handleApplicantChange(index, 'passportNumber', e.target.value.toUpperCase())}
+                                className={`w-full pl-10 pr-4 py-2 sm:py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors[`applicant${index}_passportNumber`] ? 'border-red-500' : 'border-gray-300'
+                                  }`}
+                                placeholder="Enter passport number"
+                              />
+                            </div>
+                            {errors[`applicant${index}_passportNumber`] && (
+                              <p className="text-red-500 text-xs mt-1">{errors[`applicant${index}_passportNumber`]}</p>
+                            )}
+                          </div>
+
                           {/* Nationality */}
                           <div>
                             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                               Nationality *
                             </label>
                             <div className="relative">
-                              <FiGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                              <input
+                              <FiGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none z-10" />
+                              <select
                                 id={`applicant${index}_nationality`}
-                                type="text"
                                 value={applicant.nationality}
                                 onChange={(e) => handleApplicantChange(index, 'nationality', e.target.value)}
-                                className={`w-full pl-10 pr-4 py-2 sm:py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors[`applicant${index}_nationality`] ? 'border-red-500' : 'border-gray-300'
+                                className={`w-full pl-10 pr-4 py-2 sm:py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent appearance-none ${errors[`applicant${index}_nationality`] ? 'border-red-500' : 'border-gray-300'
                                   }`}
-                                placeholder="Enter nationality"
-                              />
+                              >
+                                <option value="">Select nationality</option>
+                                {countries.map((country) => (
+                                  <option key={country.code} value={country.name}>
+                                    {country.name}
+                                  </option>
+                                ))}
+                              </select>
                             </div>
                             {errors[`applicant${index}_nationality`] && (
                               <p className="text-red-500 text-xs mt-1">{errors[`applicant${index}_nationality`]}</p>
@@ -420,7 +586,7 @@ const VisaCartPage: React.FC = () => {
                           </div>
 
                           {/* Email */}
-                          <div>
+                          <div className="sm:col-span-2">
                             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                               Email Address *
                             </label>
@@ -441,22 +607,37 @@ const VisaCartPage: React.FC = () => {
                             )}
                           </div>
 
-                          {/* Phone Number */}
-                          <div>
+                          {/* Phone Number with Country Code */}
+                          <div className="sm:col-span-2">
                             <label className="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">
                               Phone Number *
                             </label>
-                            <div className="relative">
-                              <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                              <input
-                                id={`applicant${index}_phoneNumber`}
-                                type="tel"
-                                value={applicant.phoneNumber}
-                                onChange={(e) => handleApplicantChange(index, 'phoneNumber', e.target.value)}
-                                className={`w-full pl-10 pr-4 py-2 sm:py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors[`applicant${index}_phoneNumber`] ? 'border-red-500' : 'border-gray-300'
-                                  }`}
-                                placeholder="+971 XX XXX XXXX"
-                              />
+                            <div className="flex gap-2">
+                              <div className="relative w-32">
+                                <FiPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none z-10" />
+                                <select
+                                  value={applicant.phoneCountryCode}
+                                  onChange={(e) => handleApplicantChange(index, 'phoneCountryCode', e.target.value)}
+                                  className="w-full pl-10 pr-2 py-2 sm:py-2.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent appearance-none"
+                                >
+                                  {countries.map((country) => (
+                                    <option key={country.code} value={country.dialCode}>
+                                      {country.dialCode}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="flex-1">
+                                <input
+                                  id={`applicant${index}_phoneNumber`}
+                                  type="tel"
+                                  value={applicant.phoneNumber}
+                                  onChange={(e) => handleApplicantChange(index, 'phoneNumber', e.target.value)}
+                                  className={`w-full px-4 py-2 sm:py-2.5 text-sm border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent ${errors[`applicant${index}_phoneNumber`] ? 'border-red-500' : 'border-gray-300'
+                                    }`}
+                                  placeholder="XX XXX XXXX"
+                                />
+                              </div>
                             </div>
                             {errors[`applicant${index}_phoneNumber`] && (
                               <p className="text-red-500 text-xs mt-1">{errors[`applicant${index}_phoneNumber`]}</p>
@@ -539,42 +720,38 @@ const VisaCartPage: React.FC = () => {
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Order Summary</h3>
 
                 <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
-                  {cartItems.map((item) => (
-                    <div key={item.visa.id} className="text-xs sm:text-sm">
-                      <div className="flex justify-between text-gray-600 mb-1">
-                        <span className="line-clamp-1">{item.visa.title}</span>
-                        <span className="ml-2">AED {item.visa.price * item.quantity}</span>
-                      </div>
-                      {item.addons && item.addons.map((addon) => (
-                        <div key={addon.id} className="flex justify-between text-gray-500 text-xs ml-3 sm:ml-4">
-                          <span className="line-clamp-1">+ {addon.title}</span>
-                          <span className="ml-2">AED {addon.price * item.quantity}</span>
+                  {cartItems.map((item) => {
+                    const itemPrice = getItemPrice(item);
+                    const variantName = getVariantName(item);
+
+                    return (
+                      <div key={item.visa.id} className="text-xs sm:text-sm">
+                        <div className="flex justify-between text-gray-600 mb-1">
+                          <span className="line-clamp-1">
+                            {item.visa.title}
+                            {variantName && ` (${variantName})`}
+                          </span>
+                          <span className="ml-2">AED {itemPrice * item.quantity}</span>
                         </div>
-                      ))}
-                    </div>
-                  ))}
+                        {item.addons && item.addons.map((addon) => (
+                          <div key={addon.id} className="flex justify-between text-gray-500 text-xs ml-3 sm:ml-4">
+                            <span className="line-clamp-1">+ {addon.title}</span>
+                            <span className="ml-2">AED {addon.price * item.quantity}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <div className="border-t pt-2 sm:pt-3 space-y-1.5 sm:space-y-2 mb-3 sm:mb-4">
-                  <div className="flex justify-between text-xs sm:text-sm text-gray-600">
-                    <span>Subtotal</span>
-                    <span>AED {subtotal.toFixed(2)}</span>
-                  </div>
-
-                  <div className="flex justify-between text-xs sm:text-sm text-gray-600">
-                    <span>Service Fee</span>
-                    <span>AED {serviceFee.toFixed(2)}</span>
-                  </div>
-
-                  <div className="border-t pt-2 sm:pt-3">
-                    <div className="flex justify-between text-base sm:text-lg lg:text-xl font-bold text-gray-900">
-                      <span>Total</span>
-                      <span>AED {calculateTotal().toFixed(2)}</span>
-                    </div>
+                <div className="border-t pt-2 sm:pt-3 mb-3 sm:mb-4">
+                  <div className="flex justify-between text-base sm:text-lg lg:text-xl font-bold text-gray-900">
+                    <span>Total</span>
+                    <span>AED {calculateTotal().toFixed(2)}</span>
                   </div>
                 </div>
 
-                {!showCheckoutForm ? (
+                {!showLoginOptions && !showCheckoutForm ? (
                   <button
                     onClick={handleProceedToCheckout}
                     className="w-full bg-accent text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base"
@@ -582,15 +759,25 @@ const VisaCartPage: React.FC = () => {
                     Proceed to Checkout
                     <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                   </button>
-                ) : (
+                ) : showCheckoutForm ? (
                   <button
                     onClick={handleSubmitCheckout}
-                    className="w-full bg-accent text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base"
+                    disabled={isSubmitting}
+                    className="w-full bg-accent text-white py-2.5 sm:py-3 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 mb-3 sm:mb-4 text-sm sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Submit & Pay
-                    <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                    {isSubmitting ? (
+                      <>
+                        <FiLoader className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        Submit & Pay
+                        <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                      </>
+                    )}
                   </button>
-                )}
+                ) : null}
 
                 <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-gray-600">
                   <div className="flex items-start gap-2">
@@ -640,13 +827,33 @@ const VisaCartPage: React.FC = () => {
               <div className="text-xs text-gray-600">Total Amount</div>
               <div className="text-lg font-bold text-gray-900">AED {calculateTotal().toFixed(2)}</div>
             </div>
-            <button
-              onClick={showCheckoutForm ? handleSubmitCheckout : handleProceedToCheckout}
-              className="flex-1 max-w-[180px] bg-accent text-white py-2.5 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 text-sm"
-            >
-              {showCheckoutForm ? 'Submit & Pay' : 'Checkout'}
-              <FiArrowRight className="w-4 h-4" />
-            </button>
+            {!showLoginOptions && !showCheckoutForm ? (
+              <button
+                onClick={handleProceedToCheckout}
+                className="flex-1 max-w-[180px] bg-accent text-white py-2.5 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 text-sm"
+              >
+                Checkout
+                <FiArrowRight className="w-4 h-4" />
+              </button>
+            ) : showCheckoutForm ? (
+              <button
+                onClick={handleSubmitCheckout}
+                disabled={isSubmitting}
+                className="flex-1 max-w-[180px] bg-accent text-white py-2.5 rounded-lg font-semibold hover:bg-accent/90 transition flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? (
+                  <>
+                    <FiLoader className="w-4 h-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Submit & Pay
+                    <FiArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            ) : null}
           </div>
         </div>
       )}

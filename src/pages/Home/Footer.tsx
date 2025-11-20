@@ -16,6 +16,7 @@ const Footer: React.FC = () => {
                         <div className="flex items-center gap-2 mb-3">
                             <img
                                 src="/favicon.png"
+                                loading='lazy'
                                 alt="JetSet Logo"
                                 className="h-8 w-auto"
                             />

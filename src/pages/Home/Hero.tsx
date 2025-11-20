@@ -266,6 +266,7 @@ const Hero: React.FC = () => {
                                                     <div className="absolute inset-0 opacity-60 group-hover:opacity-60 transition-opacity duration-500">
                                                         <img
                                                             src={country.image}
+                                                            loading='lazy'
                                                             alt={country.label}
                                                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                                                         />
