@@ -80,14 +80,14 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                     <span>About Us</span>
                 </Link>
 
-                <Link
+                {/* <Link
                     to="/contact"
                     className="flex items-center gap-3 py-2 text-gray-700 hover:text-primary font-medium transition-colors"
                     onClick={onClose}
                 >
                     <FiMail size={18} />
                     <span>Contact</span>
-                </Link>
+                </Link> */}
 
                 {/* Profile or Login/Signup */}
                 {isAuthenticated ? (

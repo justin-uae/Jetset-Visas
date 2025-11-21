@@ -55,12 +55,12 @@ const Navigation: React.FC = () => {
             >
                 About
             </Link>
-            <Link
+            {/* <Link
                 to="/contact"
                 className="text-gray-700 hover:text-primary font-medium transition-colors"
             >
                 Contact
-            </Link>
+            </Link> */}
 
             {isAuthenticated ? (
                 <div className="relative" ref={dropdownRef}>

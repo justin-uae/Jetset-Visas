@@ -44,12 +44,12 @@ const Home: React.FC = () => {
                             >
                                 Browse All Visas
                             </a>
-                            <a
+                            {/* <a
                                 href="/contact"
                                 className="inline-flex items-center justify-center px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg"
                             >
                                 Contact Us
-                            </a>
+                            </a> */}
                         </div>
                     </div>
                 </section>

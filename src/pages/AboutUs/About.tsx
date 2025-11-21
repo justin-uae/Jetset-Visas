@@ -241,15 +241,9 @@ const AboutUs: React.FC = () => {
                     <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                         <button
                             onClick={() => navigate('/visas')}
-                            className="px-6 sm:px-8 py-3 bg-accent text-white rounded-lg font-bold hover:bg-gray-100 transition-colors text-sm sm:text-base"
+                            className="px-6 sm:px-8 py-3 bg-accent text-white rounded-lg font-bold hover:bg-gray-100 hover:text-accent transition-colors text-sm sm:text-base"
                         >
                             Browse Visa Services
-                        </button>
-                        <button
-                            onClick={() => navigate('/contact')}
-                            className="px-6 sm:px-8 py-3 bg-white/10 backdrop-blur-sm text-white rounded-lg font-bold hover:bg-white/20 transition-colors border-2 border-white/30 text-sm sm:text-base"
-                        >
-                            Contact Us
                         </button>
                     </div>
 

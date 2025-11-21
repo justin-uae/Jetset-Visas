@@ -41,9 +41,9 @@ const Footer: React.FC = () => {
                         <Link to="/about" className="hover:text-accent transition-colors whitespace-nowrap">
                             About Us
                         </Link>
-                        <Link to="/contact" className="hover:text-accent transition-colors whitespace-nowrap">
+                        {/* <Link to="/contact" className="hover:text-accent transition-colors whitespace-nowrap">
                             Contact
-                        </Link>
+                        </Link> */}
                         <Link to="/faq" className="hover:text-accent transition-colors whitespace-nowrap">
                             FAQ
                         </Link>

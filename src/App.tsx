@@ -9,9 +9,10 @@ import CartPage from './pages/Cart/CartPage';
 import AboutUs from './pages/AboutUs/About';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
-import ContactPage from './pages/Contact/Contact';
 import ProfilePage from './pages/Profile/ProfilePage';
 import AuthProvider from './components/AuthProvider';
+import { WhatsAppButton } from './components/WhatsAppButton';
+import ContactUsPage from './pages/Contact/Contact';
 
 function App() {
   return (
@@ -31,11 +32,12 @@ function App() {
               <Route path="/about" element={<AboutUs />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/contact" element={<ContactUsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
             </Routes>
           </MainLayout>
         </AuthProvider>
+        <WhatsAppButton />
       </BrowserRouter>
     </Provider>
   );
