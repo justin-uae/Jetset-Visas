@@ -27,6 +27,52 @@ const initialState: AuthState = {
     isGuest: false,
 };
 
+// Fetch current user (for when page refreshes)
+export const fetchCurrentUser = createAsyncThunk(
+    'auth/fetchCurrentUser',
+    async (customerAccessToken: string, { rejectWithValue }) => {
+        try {
+            const query = `
+                query getCustomer($customerAccessToken: String!) {
+                    customer(customerAccessToken: $customerAccessToken) {
+                        id
+                        email
+                        firstName
+                        lastName
+                        displayName
+                    }
+                }
+            `;
+
+            const response = await shopifyFetch<{
+                customer: {
+                    id: string;
+                    email: string;
+                    firstName: string;
+                    lastName: string;
+                    displayName: string;
+                } | null;
+            }>({
+                query,
+                variables: {
+                    customerAccessToken,
+                },
+            });
+
+            if (!response.customer) {
+                // Token is invalid or expired
+                localStorage.removeItem('accessToken');
+                return rejectWithValue('Session expired. Please login again.');
+            }
+
+            return response.customer;
+        } catch (error: any) {
+            localStorage.removeItem('accessToken');
+            return rejectWithValue(error.message || 'Failed to fetch user data');
+        }
+    }
+);
+
 // Login
 export const login = createAsyncThunk(
     'auth/login',
@@ -264,6 +310,25 @@ const authSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        // Fetch Current User
+        builder
+            .addCase(fetchCurrentUser.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchCurrentUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                state.isAuthenticated = true;
+            })
+            .addCase(fetchCurrentUser.rejected, (state, action) => {
+                state.loading = false;
+                state.isAuthenticated = false;
+                state.accessToken = null;
+                state.user = null;
+                state.error = action.payload as string;
+            });
+
         // Login
         builder
             .addCase(login.pending, (state) => {

@@ -44,18 +44,19 @@ const VisaCartPage: React.FC = () => {
   const { formatPrice } = useCurrency();
   const cartItems = useAppSelector((state) => state.cart.items);
   const { isLoading: isSubmitting, error: checkoutError, checkoutUrl } = useAppSelector((state) => state.checkout);
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   const [showLoginOptions, setShowLoginOptions] = useState(false);
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [applicants, setApplicants] = useState<ApplicantForm[]>([
     {
-      firstName: '',
-      lastName: '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       gender: '',
       dateOfBirth: '',
       passportNumber: '',
       nationality: '',
-      email: '',
+      email: user?.email || '',
       phoneCountryCode: '+971',
       phoneNumber: '',
       specialRequest: ''
@@ -63,6 +64,20 @@ const VisaCartPage: React.FC = () => {
   ]);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [agreeToTerms, setAgreeToTerms] = useState(false);
+
+  // Pre-fill user data if logged in
+  useEffect(() => {
+    if (isAuthenticated && user && applicants.length > 0) {
+      const updatedApplicants = [...applicants];
+      updatedApplicants[0] = {
+        ...updatedApplicants[0],
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        email: user.email || '',
+      };
+      setApplicants(updatedApplicants);
+    }
+  }, [isAuthenticated, user]);
 
   // Handle checkout redirect when checkoutUrl is available
   useEffect(() => {
@@ -179,8 +194,14 @@ const VisaCartPage: React.FC = () => {
   };
 
   const handleProceedToCheckout = () => {
-    setShowLoginOptions(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // If user is authenticated, skip login options and go straight to checkout form
+    if (isAuthenticated) {
+      setShowCheckoutForm(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      setShowLoginOptions(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   const handleGuestCheckout = () => {
@@ -190,7 +211,7 @@ const VisaCartPage: React.FC = () => {
   };
 
   const handleLoginRedirect = () => {
-    navigate('/login');
+    navigate('/login', { state: { from: '/cart' } });
   };
 
   const handleSubmitCheckout = () => {
@@ -263,11 +284,28 @@ const VisaCartPage: React.FC = () => {
           <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Left Column - Cart Items, Login Options, or Checkout Form */}
             <div className="lg:col-span-2 space-y-3 sm:space-y-4">
+              {/* Show logged in user banner if authenticated */}
+              {isAuthenticated && user && !showCheckoutForm && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <FiCheckCircle className="text-green-600" size={20} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-900">
+                        Logged in as {user.firstName} {user.lastName}
+                      </p>
+                      <p className="text-xs text-gray-600">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {!showLoginOptions && !showCheckoutForm ? (
                 <>
-                  {/* Cart Items */}
+                  {/* Cart Items - Same as before */}
                   {cartItems.map((item) => {
-                    const itemPrice = getItemPrice(item); // Original AED price
+                    const itemPrice = getItemPrice(item);
                     const variantName = getVariantName(item);
                     const addonTotal = item.addons?.reduce((sum, addon) => sum + addon.price, 0) || 0;
                     const totalItemPrice = (itemPrice + addonTotal) * item.quantity;
@@ -275,6 +313,7 @@ const VisaCartPage: React.FC = () => {
 
                     return (
                       <div key={item.visa.id} className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                        {/* ... existing cart item code ... */}
                         <div className="flex gap-3 sm:gap-4">
                           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0">
                             <img
@@ -358,7 +397,7 @@ const VisaCartPage: React.FC = () => {
                 </>
               ) : showLoginOptions ? (
                 <>
-                  {/* Login or Guest Checkout Options */}
+                  {/* Login or Guest Checkout Options - Same as before */}
                   <div className="bg-white rounded-lg shadow-sm p-6 sm:p-8">
                     <div className="max-w-md mx-auto">
                       <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2 text-center">
@@ -415,7 +454,7 @@ const VisaCartPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  {/* Checkout Form */}
+                  {/* Checkout Form - Keep existing form code */}
                   <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
                     {/* Error Message */}
                     {checkoutError && (
@@ -709,7 +748,7 @@ const VisaCartPage: React.FC = () => {
               )}
             </div>
 
-            {/* Right Column - Order Summary */}
+            {/* Right Column - Order Summary - Same as before */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 lg:sticky lg:top-20">
                 <h3 className="font-semibold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">Order Summary</h3>
@@ -814,7 +853,7 @@ const VisaCartPage: React.FC = () => {
         )}
       </div>
 
-      {/* Fixed Bottom Bar - Mobile */}
+      {/* Fixed Bottom Bar - Mobile - Same as before */}
       {cartItems.length > 0 && (
         <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-50">
           <div className="flex items-center justify-between gap-3">

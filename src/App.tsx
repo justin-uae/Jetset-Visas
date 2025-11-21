@@ -10,27 +10,32 @@ import AboutUs from './pages/AboutUs/About';
 import Login from './pages/Login/Login';
 import Signup from './pages/Signup/Signup';
 import ContactPage from './pages/Contact/Contact';
+import ProfilePage from './pages/Profile/ProfilePage';
+import AuthProvider from './components/AuthProvider';
 
 function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
-        <MainLayout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/visas" element={<VisaListing />} />
-            <Route path="/category/:category" element={<VisaListing />} />
-            <Route path="/country/:country" element={<VisaListing />} />
-            <Route path="/visas/:handle" element={<VisaDetail />} />
-            <Route path="/category/:category" element={<VisaListing />} />
-            <Route path="/country/:country" element={<VisaListing />} />
-            <Route path="/cart" element={<CartPage />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/contact" element={<ContactPage />} />
-          </Routes>
-        </MainLayout>
+        <AuthProvider>
+          <MainLayout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/visas" element={<VisaListing />} />
+              <Route path="/category/:category" element={<VisaListing />} />
+              <Route path="/country/:country" element={<VisaListing />} />
+              <Route path="/visas/:handle" element={<VisaDetail />} />
+              <Route path="/category/:category" element={<VisaListing />} />
+              <Route path="/country/:country" element={<VisaListing />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
+            </Routes>
+          </MainLayout>
+        </AuthProvider>
       </BrowserRouter>
     </Provider>
   );
