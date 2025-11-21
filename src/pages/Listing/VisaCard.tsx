@@ -65,16 +65,16 @@ const VisaCard: React.FC<VisaCardProps> = ({
                 {/* Details Grid */}
                 <div className="space-y-2 mb-4">
                     {/* Duration */}
-                    <div className="flex items-center text-sm text-gray-600">
+                    {duration && <div className="flex items-center text-sm text-gray-600">
                         <FiClock className="mr-2 text-primary flex-shrink-0" size={16} />
                         <span className="font-medium">{duration}</span>
-                    </div>
+                    </div>}
 
                     {/* Entry Type */}
-                    <div className="flex items-center text-sm text-gray-600">
+                    {entryType && <div className="flex items-center text-sm text-gray-600">
                         <FiGlobe className="mr-2 text-primary flex-shrink-0" size={16} />
                         <span>{entryType}</span>
-                    </div>
+                    </div>}
 
                     {/* Processing Time */}
                     {processingTime && (

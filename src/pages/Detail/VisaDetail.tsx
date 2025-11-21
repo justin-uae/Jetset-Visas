@@ -10,7 +10,8 @@ import {
     FiFileText,
     FiDollarSign,
     FiUsers,
-    FiInfo
+    FiInfo,
+    FiPhone
 } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading } from '../../redux/slices/visaSlice';
@@ -393,21 +394,21 @@ const VisaDetail: React.FC = () => {
 
                             {/* Quick Info Cards */}
                             <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                                <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                {visa.duration && <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
                                     <FiClock className="text-primary mb-2" size={18} />
                                     <div className="text-xs text-gray-600 mb-1">Duration</div>
                                     <div className="font-bold text-gray-900 text-sm sm:text-base">{visa.duration}</div>
-                                </div>
-                                <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                </div>}
+                                {visa.entryType && <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
                                     <FiGlobe className="text-primary mb-2" size={18} />
                                     <div className="text-xs text-gray-600 mb-1">Entry Type</div>
                                     <div className="font-bold text-gray-900 text-sm sm:text-base">{visa.entryType}</div>
-                                </div>
-                                <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
+                                </div>}
+                                {visa.processingTime && <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
                                     <FiCheckCircle className="text-accent mb-2" size={18} />
                                     <div className="text-xs text-gray-600 mb-1">Processing</div>
                                     <div className="font-bold text-gray-900 text-sm sm:text-base">{visa.processingTime}</div>
-                                </div>
+                                </div>}
                                 <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
                                     <FiDollarSign className="text-accent mb-2" size={18} />
                                     <div className="text-xs text-gray-600 mb-1">
@@ -458,11 +459,87 @@ const VisaDetail: React.FC = () => {
                             <div className="p-4 sm:p-6">
                                 {activeTab === 'overview' && (
                                     <div>
-                                        <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">
-                                            Visa Features
-                                        </h3>
                                         <ul className="space-y-2 sm:space-y-3">
-                                            {visa.features.map((feature: string, index: number) => (
+                                            <div className="border-t pt-4">
+                                                <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                    {isGCCVisa ? 'Visa Validity Information' : 'Important Notice'}
+                                                </h4>
+                                                {isGCCVisa ? (
+                                                    <div>
+                                                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4">
+                                                            <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                                                                <li className="flex items-start">
+                                                                    <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                    <span>Visa validity starts from the date of issuance</span>
+                                                                </li>
+                                                                <li className="flex items-start">
+                                                                    <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                    <span>Stay duration is as specified in the visa type selected</span>
+                                                                </li>
+                                                                <li className="flex items-start">
+                                                                    <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                    <span>Entry type: {visa.entryType}</span>
+                                                                </li>
+                                                                <li className="flex items-start">
+                                                                    <FiAlertCircle className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                    <span className="font-medium">Overstaying may result in fines and future visa restrictions</span>
+                                                                </li>
+                                                            </ul>
+
+                                                        </div>
+                                                        <div className="border-t pt-4">
+                                                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                                What's Included
+                                                            </h4>
+                                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                                                <div className="flex items-center text-xs sm:text-sm text-gray-700">
+                                                                    <FiCheckCircle className="text-accent mr-2 flex-shrink-0" size={14} />
+                                                                    <span>Visa processing & submission</span>
+                                                                </div>
+                                                                <div className="flex items-center text-xs sm:text-sm text-gray-700">
+                                                                    <FiCheckCircle className="text-accent mr-2 flex-shrink-0" size={14} />
+                                                                    <span>Document verification</span>
+                                                                </div>
+                                                                <div className="flex items-center text-xs sm:text-sm text-gray-700">
+                                                                    <FiCheckCircle className="text-accent mr-2 flex-shrink-0" size={14} />
+                                                                    <span>Expert consultation</span>
+                                                                </div>
+                                                                <div className="flex items-center text-xs sm:text-sm text-gray-700">
+                                                                    <FiCheckCircle className="text-accent mr-2 flex-shrink-0" size={14} />
+                                                                    <span>Email notifications</span>
+                                                                </div>
+                                                                <div className="flex items-center text-xs sm:text-sm text-gray-700">
+                                                                    <FiCheckCircle className="text-accent mr-2 flex-shrink-0" size={14} />
+                                                                    <span>24/7 customer support</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                ) : (
+                                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                                                        <p className="text-xs sm:text-sm text-gray-700 mb-3">
+                                                            <span className="font-semibold text-blue-900">Visa validity varies by nationality:</span> The duration of stay for {visa.country} depends on your nationality, passport type, and immigration rules.
+                                                        </p>
+                                                        <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                                                            <li className="flex items-start">
+                                                                <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span>Some nationalities may receive 9-12 days based on travel itinerary</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span>Others may be eligible for 30-90 days stay</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span className="font-medium">We'll confirm exact validity after reviewing your details</span>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {visa?.features.map((feature: string, index: number) => (
                                                 <li key={index} className="flex items-start">
                                                     <FiCheckCircle className="text-accent mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0" size={16} />
                                                     <span className="text-gray-700 text-sm sm:text-base">{feature}</span>
@@ -474,25 +551,84 @@ const VisaDetail: React.FC = () => {
 
                                 {activeTab === 'requirements' && (
                                     <div>
-                                        <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">
-                                            Required Documents
-                                        </h3>
                                         <ul className="space-y-2 sm:space-y-3">
-                                            {visa.requirements.map((req: string, index: number) => (
+                                            {visa?.requirements?.map((req: string, index: number) => (
                                                 <li key={index} className="flex items-start">
                                                     <FiFileText className="text-primary mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0" size={16} />
                                                     <span className="text-gray-700 text-sm sm:text-base">{req}</span>
                                                 </li>
                                             ))}
+                                            <div className="border-t pt-4">
+                                                <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                    Document Specifications
+                                                </h4>
+                                                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4 space-y-2">
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiCheckCircle className="text-primary mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-medium">Passport Photos:</span>
+                                                            <span className="text-gray-600"> White background, 2x2 inches, recent (within 6 months)</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiCheckCircle className="text-primary mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-medium">Passport Copy:</span>
+                                                            <span className="text-gray-600"> Clear, colored scan showing all details</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiCheckCircle className="text-primary mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-medium">Supporting Documents:</span>
+                                                            <span className="text-gray-600"> PDF or JPG format, clear and legible</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {!isGCCVisa && (
+                                                <div className="border-t pt-4">
+                                                    <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                        Additional Requirements (May Apply)
+                                                    </h4>
+                                                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4">
+                                                        <p className="text-xs sm:text-sm text-gray-700 mb-2">
+                                                            Depending on your nationality and visa type, you may also need:
+                                                        </p>
+                                                        <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                                                            <li className="flex items-start">
+                                                                <span className="mr-2">•</span>
+                                                                <span>Travel itinerary or flight bookings</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <span className="mr-2">•</span>
+                                                                <span>Hotel reservations or accommodation proof</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <span className="mr-2">•</span>
+                                                                <span>Bank statements (last 3-6 months)</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <span className="mr-2">•</span>
+                                                                <span>Cover letter stating purpose of visit</span>
+                                                            </li>
+                                                            <li className="flex items-start">
+                                                                <span className="mr-2">•</span>
+                                                                <span>Travel insurance (recommended)</span>
+                                                            </li>
+                                                        </ul>
+                                                        <p className="text-xs text-gray-600 mt-3 font-medium">
+                                                            We'll confirm exact requirements after reviewing your application
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </ul>
                                     </div>
                                 )}
 
                                 {activeTab === 'notes' && (
                                     <div>
-                                        <h3 className="font-bold text-base sm:text-lg text-gray-900 mb-3 sm:mb-4">
-                                            Important Information
-                                        </h3>
                                         <ul className="space-y-2 sm:space-y-3">
                                             {visa.importantNotes.map((note: string, index: number) => (
                                                 <li key={index} className="flex items-start">
@@ -501,6 +637,115 @@ const VisaDetail: React.FC = () => {
                                                 </li>
                                             ))}
                                         </ul>
+                                        <div className="border-t pt-4">
+                                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                {isGCCVisa ? 'Refund & Cancellation Policy' : 'Payment & Refund Policy'}
+                                            </h4>
+                                            {isGCCVisa ? (
+                                                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 space-y-2">
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiAlertCircle className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold text-amber-900">Non-Refundable:</span>
+                                                            <span className="text-gray-700"> Visa fees are non-refundable in case of rejection by immigration authorities.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold">Security Deposit:</span>
+                                                            <span className="text-gray-700"> May be required and is fully refundable upon exit or visa status change.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold">Cancellation Before Processing:</span>
+                                                            <span className="text-gray-700"> Full refund if cancelled before submission to immigration (processing fee may apply).</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 space-y-2">
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold text-blue-900">Payment After Confirmation:</span>
+                                                            <span className="text-gray-700"> Payment is collected only after we confirm eligibility, requirements, and exact pricing.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold">Transparent Pricing:</span>
+                                                            <span className="text-gray-700"> No hidden fees. Final quote includes all processing charges.</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-start text-xs sm:text-sm">
+                                                        <FiAlertCircle className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                        <div>
+                                                            <span className="font-semibold text-amber-900">Refund Policy:</span>
+                                                            <span className="text-gray-700"> Refund terms will be clearly communicated before payment based on supplier and immigration policies.</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="border-t pt-4">
+                                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                Travel Advisory
+                                            </h4>
+                                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 sm:p-4 space-y-2 text-xs sm:text-sm text-gray-700">
+                                                <p className="flex items-start">
+                                                    <span className="mr-2">•</span>
+                                                    <span>Ensure your passport is valid for at least 6 months from date of travel</span>
+                                                </p>
+                                                <p className="flex items-start">
+                                                    <span className="mr-2">•</span>
+                                                    <span>Check if you need any health requirements or vaccinations for your destination</span>
+                                                </p>
+                                                <p className="flex items-start">
+                                                    <span className="mr-2">•</span>
+                                                    <span>Carry printed copies of your visa and supporting documents during travel</span>
+                                                </p>
+                                                <p className="flex items-start">
+                                                    <span className="mr-2">•</span>
+                                                    <span>Review entry restrictions and COVID-19 requirements if applicable</span>
+                                                </p>
+                                                <p className="flex items-start">
+                                                    <span className="mr-2">•</span>
+                                                    <span>Contact your embassy for country-specific travel advisories</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="border-t pt-4">
+                                            <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 sm:p-4">
+                                                <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-2">
+                                                    Need Assistance?
+                                                </h4>
+                                                <p className="text-xs sm:text-sm text-gray-700 mb-3">
+                                                    Our visa experts are available 24/7 to help you with any questions about your application.
+                                                </p>
+                                                <div className="flex flex-col sm:flex-row gap-2">
+
+                                                    <a href="tel:+97154567263"
+                                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-primary/90 transition"
+                                                    >
+                                                        <FiPhone size={14} />
+                                                        Call: +971 54 567 2633
+                                                    </a>
+
+                                                    <a href={`https://wa.me/${import.meta.env.VITE_CONTACT_NUMBER}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="flex items-center justify-center gap-2 px-4 py-2 bg-[#25D366] text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-[#128C7E] transition"
+                                                    >
+                                                        <FaWhatsapp size={14} />
+                                                        WhatsApp Support
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -582,7 +827,7 @@ const VisaDetail: React.FC = () => {
                             </div>
 
                             {/* Addons */}
-                            {/* {visa.addons && visa.addons.length > 0 && (
+                            {visa?.addons && visa?.addons.length > 0 && (
                                 <div>
                                     <label className="block text-xs sm:text-sm font-semibold text-gray-900 mb-2 sm:mb-3">
                                         Additional Services
@@ -622,7 +867,7 @@ const VisaDetail: React.FC = () => {
                                         ))}
                                     </div>
                                 </div>
-                            )} */}
+                            )}
 
                             {/* Price Summary */}
                             <div className="border-t pt-3 sm:pt-4">

@@ -20,9 +20,9 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
     return (
         <Link
             to={`/visas/${handle}`}
-            className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group"
+            className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group flex flex-col"
         >
-            <div className="relative h-48 overflow-hidden">
+            <div className="relative h-48 overflow-hidden flex-shrink-0">
                 <img
                     src={image}
                     loading='lazy'
@@ -38,26 +38,43 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
                 </div>
             </div>
 
-            <div className="p-4">
-                <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+            <div className="p-4 flex flex-col flex-grow">
+                <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 h-14 group-hover:text-primary transition-colors">
                     {title}
                 </h3>
 
-                <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-gray-600 text-sm">
-                        <FiClock className="mr-2 text-primary" />
-                        <span>{duration}</span>
-                    </div>
-                    <div className="flex items-center text-gray-600 text-sm">
-                        <FiDollarSign className="mr-2 text-primary" />
-                        <span className="font-semibold text-primary">AED {price}</span>
-                    </div>
+                <div className="space-y-2 mb-4 min-h-[3.5rem] flex flex-col justify-start">
+                    {duration ? (
+                        <div className="flex items-center text-gray-600 text-sm">
+                            <FiClock className="mr-2 text-primary flex-shrink-0" />
+                            <span>{duration}</span>
+                        </div>
+                    ) : (
+                        <div className="h-5"></div> // Placeholder to maintain spacing
+                    )}
+
+                    {price ? (
+                        <div className="flex items-center text-gray-600 text-sm">
+                            <FiDollarSign className="mr-2 text-primary flex-shrink-0" />
+                            <span className="font-semibold text-primary">
+                                {isGCC ? `AED ${price}` : `From AED ${price}`}
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="h-5"></div> // Placeholder to maintain spacing
+                    )}
                 </div>
 
-                <div className="pt-3 border-t border-gray-200">
-                    <span className="text-sm text-accent font-medium group-hover:text-primary transition-colors">
-                        {isGCC ? `Apply Now →` : `Enquire Now`}
-                    </span>
+                {/* CTA Section - Always at Bottom */}
+                <div className="pt-3 border-t border-gray-200 mt-auto">
+                    <div className="flex items-center justify-between">
+                        <span className="text-sm text-accent font-medium group-hover:text-primary transition-colors">
+                            {isGCC ? 'Apply Now' : 'Enquire Now'}
+                        </span>
+                        <span className="text-accent group-hover:text-primary group-hover:translate-x-1 transition-all">
+                            →
+                        </span>
+                    </div>
                 </div>
             </div>
         </Link>
@@ -78,6 +95,9 @@ const FeaturedVisasSection: React.FC = () => {
     const popularVisas = React.useMemo(() => {
         return [...allVisas]
             .filter(visa => {
+                // Filter for GCC visas only
+                if (!visa.isGCC) return false;
+
                 // Filter for common tourist visa types
                 const isPopular =
                     visa.category.toLowerCase().includes('tourist') ||
