@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FiClock, FiDollarSign } from 'react-icons/fi';
+import { FiClock } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisas, selectAllVisas, selectVisasLoading } from '../../redux/slices/visaSlice';
 import type { VisaProduct } from '../../types/visa-types';
+import { useCurrency } from '../../utils/useCurrency';
 
 interface VisaCardProps {
     title: string;
@@ -17,6 +18,7 @@ interface VisaCardProps {
 }
 
 const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, handle, flag, isGCC }) => {
+    const { formatPrice } = useCurrency();
     return (
         <Link
             to={`/visas/${handle}`}
@@ -55,9 +57,9 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
 
                     {price ? (
                         <div className="flex items-center text-gray-600 text-sm">
-                            <FiDollarSign className="mr-2 text-primary flex-shrink-0" />
+                            {/* <FiDollarSign className="mr-2 text-primary flex-shrink-0" /> */}
                             <span className="font-semibold text-primary">
-                                {isGCC ? `AED ${price}` : `From AED ${price}`}
+                                {isGCC ? `${formatPrice(price)}` : `From ${formatPrice(price)}`}
                             </span>
                         </div>
                     ) : (

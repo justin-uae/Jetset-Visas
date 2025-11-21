@@ -5,6 +5,7 @@ import { selectCartItemCount } from '../redux/slices/cartSlice';
 import { useAppSelector } from '../redux/hooks';
 import Navigation from './Navigation';
 import MobileMenu from './MobileMenu';
+import { CurrencySwitcher } from './CurrencySwitcher';
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -53,11 +54,11 @@ const Header: React.FC = () => {
                             src="/favicon.png"
                             alt="JetSet Logo"
                             loading='lazy'
-                            className="h-10 sm:h-12 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                            className="h-8 sm:h-10 md:h-12 w-auto transition-transform duration-300 group-hover:scale-105"
                         />
                         {/* Visas Text */}
-                        <span className="text-xl sm:text-2xl md:text-3xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
-                           JETSET <span className="text-accent">VISAS</span>
+                        <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-primary group-hover:text-accent transition-colors duration-300">
+                            JETSET <span className="text-accent">VISAS</span>
                         </span>
                     </Link>
 
@@ -66,16 +67,24 @@ const Header: React.FC = () => {
                         <Navigation />
                     </div>
 
-                    {/* Cart & Mobile Menu Button */}
-                    <div className="flex items-center space-x-4">
+                    {/* Cart, Currency & Mobile Menu Button */}
+                    <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+                        {/* Currency Switcher - Hidden on smallest screens */}
+                        <div className="hidden sm:block">
+                            <CurrencySwitcher />
+                        </div>
+
+                        {/* Divider - Hidden on smallest screens */}
+                        <div className="hidden sm:block border-r border-gray-200 h-6"></div>
+
                         {/* Cart Button */}
                         <Link
                             to="/cart"
                             className="relative p-2 text-gray-700 hover:text-primary transition-colors"
                         >
-                            <FiShoppingCart className="text-2xl" />
+                            <FiShoppingCart className="text-xl sm:text-2xl" />
                             {cartItemCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                                <span className="absolute -top-1 -right-1 bg-accent text-white text-xs font-bold rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center">
                                     {cartItemCount}
                                 </span>
                             )}
@@ -88,9 +97,9 @@ const Header: React.FC = () => {
                             aria-label="Toggle menu"
                         >
                             {isMobileMenuOpen ? (
-                                <FiX className="text-2xl" />
+                                <FiX className="text-xl sm:text-2xl" />
                             ) : (
-                                <FiMenu className="text-2xl" />
+                                <FiMenu className="text-xl sm:text-2xl" />
                             )}
                         </button>
                     </div>

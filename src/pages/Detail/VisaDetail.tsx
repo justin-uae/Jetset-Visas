@@ -18,11 +18,13 @@ import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading } from '../..
 import { addToCart } from '../../redux/slices/cartSlice';
 import type { VisaVariant } from '../../types/visa-types';
 import { FaWhatsapp } from 'react-icons/fa';
+import { useCurrency } from '../../utils/useCurrency';
 
 const VisaDetail: React.FC = () => {
     const { handle } = useParams<{ handle: string }>();
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { formatPrice } = useCurrency();
 
     const visa = useAppSelector(selectSelectedVisa);
     const loading = useAppSelector(selectVisasLoading);
@@ -93,7 +95,7 @@ const VisaDetail: React.FC = () => {
     const calculateTotal = () => {
         if (!selectedVariant) return 0;
 
-        let total = selectedVariant.price * quantity;
+        let total = formatPrice(selectedVariant.price * quantity);
 
         selectedAddons.forEach(addonId => {
             const addon = visa.addons.find((a: any) => a.id === addonId);
@@ -414,7 +416,7 @@ const VisaDetail: React.FC = () => {
                                     <div className="text-xs text-gray-600 mb-1">
                                         {isGCCVisa ? 'Starting from' : 'Indicative Price'}
                                     </div>
-                                    <div className="font-bold text-accent text-sm sm:text-base">AED {visa.price}</div>
+                                    <div className="font-bold text-accent text-sm sm:text-base">{formatPrice(visa.price)}</div>
                                 </div>
                             </div>
 
@@ -796,7 +798,7 @@ const VisaDetail: React.FC = () => {
                                                     </span>
                                                 </div>
                                                 <span className="font-bold text-primary text-sm sm:text-base">
-                                                    AED {variant.price}
+                                                    {formatPrice(variant.price)}
                                                 </span>
                                             </label>
                                         ))}
@@ -860,7 +862,7 @@ const VisaDetail: React.FC = () => {
                                                         {addon.description}
                                                     </div>
                                                     <div className="text-accent font-bold mt-1 text-sm sm:text-base">
-                                                        +AED {addon.price}
+                                                        +{formatPrice(addon?.price)}
                                                     </div>
                                                 </div>
                                             </label>
@@ -877,7 +879,7 @@ const VisaDetail: React.FC = () => {
                                             {selectedVariant?.title || 'Visa'} × {quantity}
                                         </span>
                                         <span className="font-medium">
-                                            AED {selectedVariant ? selectedVariant.price * quantity : 0}
+                                            {selectedVariant ? formatPrice(selectedVariant.price * quantity) : 0}
                                         </span>
                                     </div>
                                     {selectedAddons.map(addonId => {
@@ -888,7 +890,7 @@ const VisaDetail: React.FC = () => {
                                                     {addon.title} × {quantity}
                                                 </span>
                                                 <span className="font-medium">
-                                                    AED {addon.price * quantity}
+                                                    {formatPrice(addon.price * quantity)}
                                                 </span>
                                             </div>
                                         ) : null;
@@ -899,7 +901,7 @@ const VisaDetail: React.FC = () => {
                                         {isGCCVisa ? 'Total' : 'Indicative Total'}
                                     </span>
                                     <span className="font-bold text-xl sm:text-2xl text-accent">
-                                        AED {calculateTotal()}
+                                        {calculateTotal()}
                                     </span>
                                 </div>
                                 {!isGCCVisa && (

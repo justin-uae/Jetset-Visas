@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiClock, FiGlobe, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 import type { VisaProduct } from '../../types/visa-types';
+import { useCurrency } from '../../utils/useCurrency';
 
 interface VisaCardProps extends Omit<VisaProduct, 'variants' | 'addons' | 'features' | 'requirements' | 'importantNotes'> {
     popular?: boolean;
@@ -21,7 +22,7 @@ const VisaCard: React.FC<VisaCardProps> = ({
     popular = false,
 }) => {
     const image = images[0];
-
+    const { formatPrice } = useCurrency();
     return (
         <Link
             to={`/visas/${handle}`}
@@ -90,7 +91,7 @@ const VisaCard: React.FC<VisaCardProps> = ({
                     <div>
                         <div className="text-xs text-gray-500 mb-1">Starting from</div>
                         <div className="text-2xl font-bold text-accent">
-                            AED {price}
+                            {formatPrice(price)}
                         </div>
                     </div>
                     <div className="flex items-center text-primary font-semibold group-hover:text-accent transition-colors">

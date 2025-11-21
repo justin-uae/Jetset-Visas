@@ -23,6 +23,7 @@ import { useAppSelector, useAppDispatch } from '../../redux/hooks';
 import { removeFromCart, updateQuantity, clearCart } from '../../redux/slices/cartSlice';
 import { createShopifyCheckout, clearCheckoutError } from '../../redux/slices/checkoutSlice';
 import { countries } from '../../constants/visaConstants';
+import { useCurrency } from '../../utils/useCurrency';
 
 interface ApplicantForm {
   firstName: string;
@@ -37,10 +38,10 @@ interface ApplicantForm {
   specialRequest: string;
 }
 
-
 const VisaCartPage: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const { formatPrice } = useCurrency();
   const cartItems = useAppSelector((state) => state.cart.items);
   const { isLoading: isSubmitting, error: checkoutError, checkoutUrl } = useAppSelector((state) => state.checkout);
 
@@ -66,10 +67,7 @@ const VisaCartPage: React.FC = () => {
   // Handle checkout redirect when checkoutUrl is available
   useEffect(() => {
     if (checkoutUrl) {
-      // Clear cart
       dispatch(clearCart());
-
-      // Redirect to Shopify checkout
       window.location.href = checkoutUrl;
     }
   }, [checkoutUrl, dispatch]);
@@ -81,7 +79,7 @@ const VisaCartPage: React.FC = () => {
     };
   }, [dispatch]);
 
-  // Helper function to get the correct price for an item
+  // Helper function to get the correct price for an item (original AED price)
   const getItemPrice = (item: any) => {
     return item.selectedVariant?.price ?? item.visa.price;
   };
@@ -206,10 +204,11 @@ const VisaCartPage: React.FC = () => {
       return;
     }
 
-    // Dispatch Redux thunk to create checkout
+    // Dispatch Redux thunk with original AED prices
     dispatch(createShopifyCheckout({ cartItems, applicants }));
   };
 
+  // Calculate subtotal in AED (for checkout)
   const calculateSubtotal = () => {
     return cartItems.reduce((sum, item) => {
       const basePrice = getItemPrice(item);
@@ -268,7 +267,7 @@ const VisaCartPage: React.FC = () => {
                 <>
                   {/* Cart Items */}
                   {cartItems.map((item) => {
-                    const itemPrice = getItemPrice(item);
+                    const itemPrice = getItemPrice(item); // Original AED price
                     const variantName = getVariantName(item);
                     const addonTotal = item.addons?.reduce((sum, addon) => sum + addon.price, 0) || 0;
                     const totalItemPrice = (itemPrice + addonTotal) * item.quantity;
@@ -342,11 +341,11 @@ const VisaCartPage: React.FC = () => {
                               </div>
                               <div className="text-right">
                                 <p className="text-base sm:text-lg lg:text-xl font-bold text-gray-900">
-                                  AED {totalItemPrice}
+                                  {formatPrice(totalItemPrice)}
                                 </p>
                                 {item.quantity > 1 && (
                                   <p className="text-xs sm:text-sm text-gray-600">
-                                    AED {pricePerUnit} each
+                                    {formatPrice(pricePerUnit)} each
                                   </p>
                                 )}
                               </div>
@@ -369,7 +368,6 @@ const VisaCartPage: React.FC = () => {
                         Login to save your order history or continue as a guest
                       </p>
 
-                      {/* Login Button */}
                       <button
                         onClick={handleLoginRedirect}
                         className="w-full bg-primary text-white py-3 sm:py-4 rounded-lg font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-3 mb-4 text-sm sm:text-base"
@@ -378,7 +376,6 @@ const VisaCartPage: React.FC = () => {
                         Login to Your Account
                       </button>
 
-                      {/* Divider */}
                       <div className="relative my-6">
                         <div className="absolute inset-0 flex items-center">
                           <div className="w-full border-t border-gray-300"></div>
@@ -388,7 +385,6 @@ const VisaCartPage: React.FC = () => {
                         </div>
                       </div>
 
-                      {/* Guest Checkout Button */}
                       <button
                         onClick={handleGuestCheckout}
                         className="w-full bg-gray-100 text-gray-900 py-3 sm:py-4 rounded-lg font-semibold hover:bg-gray-200 transition flex items-center justify-center gap-3 text-sm sm:text-base"
@@ -397,7 +393,6 @@ const VisaCartPage: React.FC = () => {
                         Continue as Guest
                       </button>
 
-                      {/* Benefits of Login */}
                       <div className="mt-8 p-4 bg-blue-50 rounded-lg">
                         <h4 className="font-semibold text-gray-900 mb-2 text-sm">Benefits of logging in:</h4>
                         <ul className="text-xs sm:text-sm text-gray-600 space-y-1">
@@ -721,7 +716,7 @@ const VisaCartPage: React.FC = () => {
 
                 <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
                   {cartItems.map((item) => {
-                    const itemPrice = getItemPrice(item);
+                    const itemPrice = getItemPrice(item); // Original AED price
                     const variantName = getVariantName(item);
 
                     return (
@@ -731,12 +726,12 @@ const VisaCartPage: React.FC = () => {
                             {item.visa.title}
                             {variantName && ` (${variantName})`}
                           </span>
-                          <span className="ml-2">AED {itemPrice * item.quantity}</span>
+                          <span className="ml-2">{formatPrice(itemPrice * item.quantity)}</span>
                         </div>
                         {item.addons && item.addons.map((addon) => (
                           <div key={addon.id} className="flex justify-between text-gray-500 text-xs ml-3 sm:ml-4">
                             <span className="line-clamp-1">+ {addon.title}</span>
-                            <span className="ml-2">AED {addon.price * item.quantity}</span>
+                            <span className="ml-2">{formatPrice(addon.price * item.quantity)}</span>
                           </div>
                         ))}
                       </div>
@@ -747,7 +742,7 @@ const VisaCartPage: React.FC = () => {
                 <div className="border-t pt-2 sm:pt-3 mb-3 sm:mb-4">
                   <div className="flex justify-between text-base sm:text-lg lg:text-xl font-bold text-gray-900">
                     <span>Total</span>
-                    <span>AED {calculateTotal().toFixed(2)}</span>
+                    <span>{formatPrice(calculateTotal())}</span>
                   </div>
                 </div>
 
@@ -825,7 +820,7 @@ const VisaCartPage: React.FC = () => {
           <div className="flex items-center justify-between gap-3">
             <div>
               <div className="text-xs text-gray-600">Total Amount</div>
-              <div className="text-lg font-bold text-gray-900">AED {calculateTotal().toFixed(2)}</div>
+              <div className="text-lg font-bold text-gray-900">{formatPrice(calculateTotal())}</div>
             </div>
             {!showLoginOptions && !showCheckoutForm ? (
               <button
