@@ -104,19 +104,6 @@ const HowItWorks: React.FC = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* CTA */}
-                <div className="text-center mt-12">
-                    <p className="text-gray-600 mb-6 text-lg">
-                        Ready to start your visa application?
-                    </p>
-                    <a
-                        href="/visas"
-                        className="inline-flex items-center px-8 py-4 bg-accent text-white font-semibold rounded-lg hover:bg-accent/90 transition-all transform hover:scale-105 shadow-lg"
-                    >
-                        Get Started Now
-                    </a>
-                </div>
             </div>
         </section>
     );
