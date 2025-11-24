@@ -11,7 +11,8 @@ import {
     FiDollarSign,
     FiUsers,
     FiInfo,
-    FiPhone
+    FiPhone,
+    FiZap
 } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading } from '../../redux/slices/visaSlice';
@@ -472,7 +473,7 @@ const VisaDetail: React.FC = () => {
                                                             <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
                                                                 <li className="flex items-start">
                                                                     <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
-                                                                    <span>Visa validity starts from the date of issuance</span>
+                                                                    <span>Visa validity: 59 days from the date of issuance for entry into the UAE</span>
                                                                 </li>
                                                                 <li className="flex items-start">
                                                                     <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
@@ -487,9 +488,27 @@ const VisaDetail: React.FC = () => {
                                                                     <span className="font-medium">Overstaying may result in fines and future visa restrictions</span>
                                                                 </li>
                                                             </ul>
-
                                                         </div>
-                                                        <div className="border-t pt-4">
+
+                                                        <div className="border-t pt-4 mt-4">
+                                                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                                Processing Time
+                                                            </h4>
+                                                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+                                                                <ul className="space-y-2 text-xs sm:text-sm text-gray-700">
+                                                                    <li className="flex items-start">
+                                                                        <FiClock className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                        <span><span className="font-semibold">Normal Processing:</span> 48-72 hours</span>
+                                                                    </li>
+                                                                    <li className="flex items-start">
+                                                                        <FiZap className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                        <span><span className="font-semibold">Express Processing:</span> 24 hours (Additional 199 AED charge applies)</span>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="border-t pt-4 mt-4">
                                                             <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
                                                                 What's Included
                                                             </h4>
@@ -517,7 +536,6 @@ const VisaDetail: React.FC = () => {
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                 ) : (
                                                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
                                                         <p className="text-xs sm:text-sm text-gray-700 mb-3">
@@ -560,6 +578,53 @@ const VisaDetail: React.FC = () => {
                                                     <span className="text-gray-700 text-sm sm:text-base">{req}</span>
                                                 </li>
                                             ))}
+
+                                            {isGCCVisa && (
+                                                <div className="border-t pt-4 mt-4">
+                                                    <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                        Complete Document Checklist
+                                                    </h4>
+                                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 space-y-2">
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiFileText className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <span>Passport copies (front and signature page) for each visitor</span>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiFileText className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <span>Color photograph with white background for each visitor</span>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiFileText className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <span>Guarantor's Passport, Visa & Emirates ID</span>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiFileText className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <span>Round-trip ticket (Not mandatory)</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4 mt-3">
+                                                        <h5 className="font-semibold text-xs sm:text-sm text-amber-900 mb-2">
+                                                            Additional Requirements for Pakistani Nationals:
+                                                        </h5>
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-start text-xs sm:text-sm">
+                                                                <FiFileText className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span>Proof of stay in UAE (Tenancy Contract of guarantor or confirmed hotel reservation)</span>
+                                                            </div>
+                                                            <div className="flex items-start text-xs sm:text-sm">
+                                                                <FiFileText className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span>CNIC (Computerized National Identity Card)</span>
+                                                            </div>
+                                                            <div className="flex items-start text-xs sm:text-sm">
+                                                                <FiFileText className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                                <span>Last 6 months bank statement (of visitor or guarantor)</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="border-t pt-4">
                                                 <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
                                                     Document Specifications
@@ -638,6 +703,44 @@ const VisaDetail: React.FC = () => {
                                                     <span className="text-gray-700 text-sm sm:text-base">{note}</span>
                                                 </li>
                                             ))}
+
+                                            {isGCCVisa && (
+                                                <div className="border-t pt-4 mt-4">
+                                                    <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
+                                                        Critical Information
+                                                    </h4>
+                                                    <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4 space-y-2">
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiAlertCircle className="text-red-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <div>
+                                                                <span className="font-semibold text-red-900">Recent UAE Visit:</span>
+                                                                <span className="text-gray-700"> The chances of rejection are high if the applicant has visited the UAE within the past month.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiAlertCircle className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <div>
+                                                                <span className="font-semibold text-amber-900">Guarantor Required:</span>
+                                                                <span className="text-gray-700"> A refundable security deposit and guarantor documents are required for all visa applications.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiInfo className="text-blue-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <div>
+                                                                <span className="font-semibold text-blue-900">No Guarantor/Direct Relative:</span>
+                                                                <span className="text-gray-700"> A refundable deposit of 2,500 AED is required. This will be refunded within 7-8 working days after exit, visa status change, or rejection.</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex items-start text-xs sm:text-sm">
+                                                            <FiAlertCircle className="text-red-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
+                                                            <div>
+                                                                <span className="font-semibold text-red-900">Approval Discretion:</span>
+                                                                <span className="text-gray-700"> Visa approval is at the sole discretion of immigration authorities. Visa charges are non-refundable in case of rejection.</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </ul>
                                         <div className="border-t pt-4">
                                             <h4 className="font-semibold text-sm sm:text-base text-gray-900 mb-3">
@@ -729,14 +832,12 @@ const VisaDetail: React.FC = () => {
                                                     Our visa experts are available 24/7 to help you with any questions about your application.
                                                 </p>
                                                 <div className="flex flex-col sm:flex-row gap-2">
-
                                                     <a href="tel:+97154567263"
                                                         className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-xs sm:text-sm font-semibold hover:bg-primary/90 transition"
                                                     >
                                                         <FiPhone size={14} />
                                                         Call: +971 54 567 2633
                                                     </a>
-
                                                     <a href={`https://wa.me/${import.meta.env.VITE_CONTACT_NUMBER}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
