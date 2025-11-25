@@ -189,7 +189,7 @@ const VisaDetail: React.FC = () => {
                                         <li className="flex items-start">
                                             <span className="mr-2 flex-shrink-0">•</span>
                                             <span className="font-semibold text-amber-900">
-                                                Visa charges are non-refundable in the event of rejection.
+                                                Visa is subject to approval from immigration department & 100% non-refundable once applied or if rejected.
                                             </span>
                                         </li>
                                         <li className="flex items-start">
@@ -204,11 +204,17 @@ const VisaDetail: React.FC = () => {
                                                 The security deposit is refunded only after the applicant exits the country within the permitted visa validity or changes status to employment or any other visa type.
                                             </span>
                                         </li>
+                                        <li className="flex items-start">
+                                            <span className="mr-2 flex-shrink-0">•</span>
+                                            <span>
+                                                After your visa payment is completed, please note that a refundable security deposit of AED 2,550 is required by immigration. This amount can be paid via bank transfer, with both local and international transfers accepted.
+                                            </span>
+                                        </li>
                                     </ul>
                                 </div>
 
                                 <p className="text-xs text-gray-500 px-1">
-                                    By proceeding with the payment, you acknowledge and agree to these terms and conditions.
+                                    By proceeding with the payment, you acknowledge and agree to these terms and conditions. Please note that the purchase is non-refundable.
                                 </p>
                             </div>
 
