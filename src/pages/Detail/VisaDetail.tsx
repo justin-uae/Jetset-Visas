@@ -758,7 +758,7 @@ const VisaDetail: React.FC = () => {
                                                         <FiAlertCircle className="text-amber-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
                                                         <div>
                                                             <span className="font-semibold text-amber-900">Non-Refundable:</span>
-                                                            <span className="text-gray-700"> Visa fees are non-refundable in case of rejection by immigration authorities.</span>
+                                                            <span className="text-gray-700"> Visa charges are 100% non-refundable once the terms and conditions have been accepted and the payment has been completed online</span>
                                                         </div>
                                                     </div>
                                                     <div className="flex items-start text-xs sm:text-sm">
@@ -766,13 +766,6 @@ const VisaDetail: React.FC = () => {
                                                         <div>
                                                             <span className="font-semibold">Security Deposit:</span>
                                                             <span className="text-gray-700"> May be required and is fully refundable upon exit or visa status change.</span>
-                                                        </div>
-                                                    </div>
-                                                    <div className="flex items-start text-xs sm:text-sm">
-                                                        <FiCheckCircle className="text-green-600 mr-2 mt-0.5 flex-shrink-0" size={14} />
-                                                        <div>
-                                                            <span className="font-semibold">Cancellation Before Processing:</span>
-                                                            <span className="text-gray-700"> Full refund if cancelled before submission to immigration (processing fee may apply).</span>
                                                         </div>
                                                     </div>
                                                 </div>
