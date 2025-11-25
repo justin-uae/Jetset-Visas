@@ -60,7 +60,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
 
     // Dynamically build durations from Shopify data
     const durations: FilterOption[] = React.useMemo(() => {
-        const durationSet = new Set(allVisas.map(visa => visa.duration));
+        const durationSet = new Set(
+            allVisas
+                .map(visa => visa.duration)
+                .filter(duration => duration && duration.trim() !== '') // Filter out empty values
+        );
 
         const durationOptions = Array.from(durationSet)
             .map(duration => ({
@@ -78,7 +82,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
             { value: 'ALL', label: 'All Durations', flag: '⏱️' },
             ...durationOptions
         ];
-    }, [allVisas]);
+    }, [allVisas])
 
     // Dynamically build entry types from Shopify data
     const entryTypes: FilterOption[] = React.useMemo(() => {
@@ -220,22 +224,20 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
                                 <button
                                     key={country.value}
                                     onClick={() => handleCountryChange(country.value)}
-                                    className={`w-full flex items-center justify-between p-2 sm:p-3 rounded-lg transition-all ${
-                                        selectedFilters.country === country.value
-                                            ? 'bg-primary text-white'
-                                            : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
-                                    }`}
+                                    className={`w-full flex items-center justify-between p-2 sm:p-3 rounded-lg transition-all ${selectedFilters.country === country.value
+                                        ? 'bg-primary text-white'
+                                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
+                                        }`}
                                 >
                                     <div className="flex items-center min-w-0">
                                         {/* <span className="text-lg sm:text-xl mr-2 sm:mr-3 flex-shrink-0">{country.flag}</span> */}
                                         <span className="font-medium text-xs sm:text-sm truncate">{country.label}</span>
                                     </div>
                                     {country.count && (
-                                        <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2 ${
-                                            selectedFilters.country === country.value
-                                                ? 'bg-white/20'
-                                                : 'bg-gray-200'
-                                        }`}>
+                                        <span className={`text-xs px-2 py-1 rounded-full flex-shrink-0 ml-2 ${selectedFilters.country === country.value
+                                            ? 'bg-white/20'
+                                            : 'bg-gray-200'
+                                            }`}>
                                             {country.count}
                                         </span>
                                     )}
@@ -253,11 +255,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
                                 <button
                                     key={dur.value}
                                     onClick={() => handleDurationChange(dur.value)}
-                                    className={`w-full flex items-center p-2 rounded-lg transition-all text-left ${
-                                        selectedFilters.duration === dur.value
-                                            ? 'bg-primary/10 text-primary border border-primary'
-                                            : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent'
-                                    }`}
+                                    className={`w-full flex items-center p-2 rounded-lg transition-all text-left ${selectedFilters.duration === dur.value
+                                        ? 'bg-primary/10 text-primary border border-primary'
+                                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent'
+                                        }`}
                                 >
                                     <span className="mr-2 flex-shrink-0">{dur.flag}</span>
                                     <span className="text-xs sm:text-sm font-medium">{dur.label}</span>
@@ -275,11 +276,10 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ onFilterChange, visaCount
                                 <button
                                     key={type.value}
                                     onClick={() => handleEntryTypeChange(type.value)}
-                                    className={`w-full flex items-center p-2 rounded-lg transition-all text-left ${
-                                        selectedFilters.entryType === type.value
-                                            ? 'bg-primary/10 text-primary border border-primary'
-                                            : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent'
-                                    }`}
+                                    className={`w-full flex items-center p-2 rounded-lg transition-all text-left ${selectedFilters.entryType === type.value
+                                        ? 'bg-primary/10 text-primary border border-primary'
+                                        : 'bg-gray-50 hover:bg-gray-100 text-gray-700 border border-transparent'
+                                        }`}
                                 >
                                     <span className="text-xs sm:text-sm font-medium">{type.label}</span>
                                 </button>
