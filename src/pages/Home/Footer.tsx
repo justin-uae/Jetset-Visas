@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FiMail, FiPhone } from 'react-icons/fi';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Footer: React.FC = () => {
     const currentYear = new Date().getFullYear();
@@ -14,7 +15,7 @@ const Footer: React.FC = () => {
                     {/* Logo & Description */}
                     <div className="flex-shrink-0 lg:max-w-xs">
                         <div className="flex items-center gap-2 mb-3">
-                            <img
+                            <LazyLoadImage
                                 src="/favicon.png"
                                 loading='lazy'
                                 alt="JetSet Logo"

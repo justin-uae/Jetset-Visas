@@ -6,6 +6,7 @@ import { useAppSelector } from '../redux/hooks';
 import Navigation from './Navigation';
 import MobileMenu from './MobileMenu';
 import { CurrencySwitcher } from './CurrencySwitcher';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Header: React.FC = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -50,7 +51,7 @@ const Header: React.FC = () => {
                     {/* Logo with Text */}
                     <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group">
                         {/* Logo Image */}
-                        <img
+                        <LazyLoadImage
                             src="/favicon.png"
                             alt="JetSet Logo"
                             loading='lazy'

@@ -24,6 +24,7 @@ import { removeFromCart, updateQuantity, clearCart } from '../../redux/slices/ca
 import { createShopifyCheckout, clearCheckoutError } from '../../redux/slices/checkoutSlice';
 import { countries } from '../../constants/visaConstants';
 import { useCurrency } from '../../utils/useCurrency';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 interface ApplicantForm {
   firstName: string;
@@ -316,7 +317,7 @@ const VisaCartPage: React.FC = () => {
                         {/* ... existing cart item code ... */}
                         <div className="flex gap-3 sm:gap-4">
                           <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden border-2 transition-all flex-shrink-0">
-                            <img
+                            <LazyLoadImage
                               src={item?.visa?.images[0]}
                               loading='lazy'
                               alt={`${item.visa?.title}`}

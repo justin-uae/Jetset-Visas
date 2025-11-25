@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiClock, FiGlobe, FiCheckCircle, FiArrowRight } from 'react-icons/fi';
 import type { VisaProduct } from '../../types/visa-types';
 import { useCurrency } from '../../utils/useCurrency';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 interface VisaCardProps extends Omit<VisaProduct, 'variants' | 'addons' | 'features' | 'requirements' | 'importantNotes'> {
     popular?: boolean;
@@ -30,7 +31,7 @@ const VisaCard: React.FC<VisaCardProps> = ({
         >
             {/* Image Section */}
             <div className="relative h-48 overflow-hidden">
-                <img
+                <LazyLoadImage
                     src={image}
                     loading='lazy'
                     alt={title}

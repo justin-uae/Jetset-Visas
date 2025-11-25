@@ -20,6 +20,7 @@ import { addToCart } from '../../redux/slices/cartSlice';
 import type { VisaVariant } from '../../types/visa-types';
 import { FaWhatsapp } from 'react-icons/fa';
 import { useCurrency } from '../../utils/useCurrency';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const VisaDetail: React.FC = () => {
     const { handle } = useParams<{ handle: string }>();
@@ -346,7 +347,7 @@ const VisaDetail: React.FC = () => {
                         {/* Image Gallery */}
                         <div className="bg-white rounded-lg sm:rounded-xl shadow-md sm:shadow-lg overflow-hidden">
                             <div className="relative h-56 sm:h-80 lg:h-96 bg-gray-100">
-                                <img
+                                <LazyLoadImage
                                     loading='lazy'
                                     src={visa.images[selectedImage]}
                                     alt={visa.title}
@@ -376,7 +377,7 @@ const VisaDetail: React.FC = () => {
                                                 : 'border-gray-200 hover:border-gray-400'
                                                 }`}
                                         >
-                                            <img
+                                            <LazyLoadImage
                                                 src={img}
                                                 loading='lazy'
                                                 alt={`${visa.title} ${index + 1}`}

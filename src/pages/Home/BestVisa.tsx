@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisas, selectAllVisas, selectVisasLoading } from '../../redux/slices/visaSlice';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 interface CityCardProps {
     name: string;
@@ -15,22 +16,22 @@ interface CityCardProps {
 
 const CityCard: React.FC<CityCardProps> = ({ name, image, route, flag }) => {
     return (
-        <Link 
-            to={route} 
+        <Link
+            to={route}
             className="flex-shrink-0 w-40 sm:w-44 md:w-52 lg:w-56 group cursor-pointer"
         >
             <div className="relative h-40 sm:h-44 md:h-52 lg:h-56 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
                 {/* Background Image */}
-                <img
+                <LazyLoadImage
                     src={image}
                     loading='lazy'
                     alt={name}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                 />
-                
+
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-transparent to-accent/30 opacity-80 group-hover:opacity-90 transition-opacity duration-300"></div>
-                
+
                 {/* Dark gradient for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
 

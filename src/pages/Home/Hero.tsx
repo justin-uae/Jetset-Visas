@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FiMapPin, FiChevronDown, FiX } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisas, selectAllVisas, selectVisasLoading } from '../../redux/slices/visaSlice';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 const Hero: React.FC = () => {
     const [showSelector, setShowSelector] = useState(false);
@@ -156,7 +157,7 @@ const Hero: React.FC = () => {
                                             >
                                                 <div className="relative bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200 hover:border-primary overflow-hidden">
                                                     <div className="relative h-32 sm:h-36 overflow-hidden">
-                                                        <img
+                                                        <LazyLoadImage
                                                             src={country.image}
                                                             alt={country.label}
                                                             className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"

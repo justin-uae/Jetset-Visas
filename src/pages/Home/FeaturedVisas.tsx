@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { fetchVisas, selectAllVisas, selectVisasLoading } from '../../redux/slices/visaSlice';
 import type { VisaProduct } from '../../types/visa-types';
 import { useCurrency } from '../../utils/useCurrency';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 
 interface VisaCardProps {
     title: string;
@@ -25,7 +26,7 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
             className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden group flex flex-col"
         >
             <div className="relative h-48 overflow-hidden flex-shrink-0">
-                <img
+                <LazyLoadImage
                     src={image}
                     loading='lazy'
                     alt={title}
