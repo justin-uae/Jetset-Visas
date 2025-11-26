@@ -364,19 +364,6 @@ const VisaDetail: React.FC = () => {
                                     alt={visa.title}
                                     className="w-full h-full object-cover"
                                 />
-                                <div className="absolute top-3 right-3 z-10">
-                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl  group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
-                                        <LazyLoadImage
-                                            src={`https://flagcdn.com/w160/${visa?.flag.toLowerCase()}.png`}
-                                            alt={`${visa?.title} flag`}
-                                            className="absolute inset-0 w-full h-full object-cover"
-                                            loading="lazy"
-                                            onError={(e: any) => {
-                                                e.target.style.display = 'none';
-                                            }}
-                                        />
-                                    </div>
-                                </div>
                                 {/* Visa Type Badge */}
                                 <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
                                     <span className={`px-3 py-1.5 rounded-full text-xs font-semibold ${isGCCVisa

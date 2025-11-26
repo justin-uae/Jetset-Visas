@@ -14,7 +14,7 @@ interface CityCardProps {
     visaCount: number;
 }
 
-const CityCard: React.FC<CityCardProps> = ({ name, image, route, flag }) => {
+const CityCard: React.FC<CityCardProps> = ({ name, image, route }) => {
     return (
         <Link
             to={route}
@@ -34,21 +34,6 @@ const CityCard: React.FC<CityCardProps> = ({ name, image, route, flag }) => {
 
                 {/* Dark gradient for text readability */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-
-                {/* Flag - Top Right */}
-                <div className="absolute top-3 right-3 z-10">
-                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
-                        <LazyLoadImage
-                            src={`https://flagcdn.com/w160/${flag.toLowerCase()}.png`}
-                            alt={`${name} flag`}
-                            className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
-                            onError={(e: any) => {
-                                e.target.style.display = 'none';
-                            }}
-                        />
-                    </div>
-                </div>
 
                 {/* Glassmorphism Country Name - Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 z-10">

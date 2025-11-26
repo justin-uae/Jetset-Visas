@@ -18,7 +18,7 @@ interface VisaCardProps {
     isGCC?: Boolean;
 }
 
-const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, handle, flag, isGCC }) => {
+const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, handle, country, isGCC }) => {
     const { formatPrice } = useCurrency();
     return (
         <Link
@@ -32,24 +32,11 @@ const VisaCard: React.FC<VisaCardProps> = ({ title, duration, price, image, hand
                     alt={title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
-                <div className="absolute top-3 right-3 z-10">
-                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl  group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
-                        <LazyLoadImage
-                            src={`https://flagcdn.com/w160/${flag.toLowerCase()}.png`}
-                            alt={`${name} flag`}
-                            className="absolute inset-0 w-full h-full object-cover"
-                            loading="lazy"
-                            onError={(e: any) => {
-                                e.target.style.display = 'none';
-                            }}
-                        />
-                    </div>
-                </div>
             </div>
 
             <div className="p-4 flex flex-col flex-grow">
                 <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-2 h-14 group-hover:text-primary transition-colors">
-                    {title}
+                    {title} - {country?.toUpperCase()}
                 </h3>
 
                 <div className="space-y-2 mb-4 min-h-[3.5rem] flex flex-col justify-start">
