@@ -37,7 +37,7 @@ const CityCard: React.FC<CityCardProps> = ({ name, image, route, flag }) => {
 
                 {/* Flag - Top Right */}
                 <div className="absolute top-3 right-3 z-10">
-                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl border-2 border-white/40 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
                         <LazyLoadImage
                             src={`https://flagcdn.com/w160/${flag.toLowerCase()}.png`}
                             alt={`${name} flag`}

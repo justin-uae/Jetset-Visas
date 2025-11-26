@@ -8,14 +8,13 @@ import {
     FiShoppingCart,
     FiArrowLeft,
     FiFileText,
-    FiDollarSign,
     FiUsers,
     FiInfo,
     FiPhone,
     FiZap
 } from 'react-icons/fi';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading } from '../../redux/slices/visaSlice';
+import { fetchVisaByHandle, selectSelectedVisa, selectVisasLoading, setSelectedVisa } from '../../redux/slices/visaSlice';
 import { addToCart } from '../../redux/slices/cartSlice';
 import type { VisaVariant } from '../../types/visa-types';
 import { FaWhatsapp } from 'react-icons/fa';
@@ -38,21 +37,33 @@ const VisaDetail: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'overview' | 'requirements' | 'notes'>('overview');
     const [showPolicyModal, setShowPolicyModal] = useState(false);
 
+    // Set default variant when visa loads
     useEffect(() => {
+        dispatch(setSelectedVisa(null)); // Clear immediately
+
+        // Reset all local state
+        setSelectedImage(0);
+        setQuantity(1);
+        setSelectedVariant(null); // This will be set by the next useEffect
+        setSelectedAddons([]);
+        setActiveTab('overview');
+        setShowPolicyModal(false);
+
+        // Then fetch new visa
         if (handle) {
             dispatch(fetchVisaByHandle(handle));
         }
     }, [handle, dispatch]);
 
-    // Set default variant when visa loads
+    // Set default variant when visa loads - ALWAYS update when visa changes
     useEffect(() => {
-        if (visa && visa.variants.length > 0 && !selectedVariant) {
+        if (visa && visa.variants.length > 0) {
             const defaultVariant = visa.variants.find(
                 v => v.title.toLowerCase().includes('adult')
             ) || visa.variants[0];
             setSelectedVariant(defaultVariant);
         }
-    }, [visa, selectedVariant]);
+    }, [visa?.id]); // Trigger only when visa ID changes
 
     const isGCCVisa = useMemo(() => {
         return visa?.isGCC;
@@ -95,18 +106,18 @@ const VisaDetail: React.FC = () => {
     };
 
     const calculateTotal = () => {
-        if (!selectedVariant) return 0;
+        if (!selectedVariant) return formatPrice(0); // Return formatted string for display
 
-        let total = formatPrice(selectedVariant.price * quantity);
+        let total = selectedVariant.price * quantity; // Keep as number
 
         selectedAddons.forEach(addonId => {
             const addon = visa.addons.find((a: any) => a.id === addonId);
             if (addon) {
-                total += addon.price * quantity;
+                total += addon.price * quantity; // Add as numbers
             }
         });
 
-        return total;
+        return formatPrice(total); // Format only at the end
     };
 
     const handleAddToCart = () => {
@@ -153,7 +164,7 @@ const VisaDetail: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 pb-24 lg:pb-8">
+        <div key={handle} className="min-h-screen bg-gray-50 pb-24 lg:pb-8">
             {/* Policy Modal for GCC Visas */}
             {/* Policy Modal - Responsive */}
             {showPolicyModal && isGCCVisa && (
@@ -353,8 +364,18 @@ const VisaDetail: React.FC = () => {
                                     alt={visa.title}
                                     className="w-full h-full object-cover"
                                 />
-                                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white rounded-full p-2 sm:p-3 shadow-lg">
-                                    <span className="text-2xl sm:text-3xl lg:text-4xl">{visa.flag}</span>
+                                <div className="absolute top-3 right-3 z-10">
+                                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl  group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
+                                        <LazyLoadImage
+                                            src={`https://flagcdn.com/w160/${visa?.flag.toLowerCase()}.png`}
+                                            alt={`${visa?.title} flag`}
+                                            className="absolute inset-0 w-full h-full object-cover"
+                                            loading="lazy"
+                                            onError={(e: any) => {
+                                                e.target.style.display = 'none';
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                                 {/* Visa Type Badge */}
                                 <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
@@ -420,7 +441,14 @@ const VisaDetail: React.FC = () => {
                                     <div className="font-bold text-gray-900 text-sm sm:text-base">{visa.processingTime}</div>
                                 </div>}
                                 <div className="p-3 sm:p-4 bg-gray-50 rounded-lg">
-                                    <FiDollarSign className="text-accent mb-2" size={18} />
+                                    <div className="w-5 h-5 sm:w-6 sm:h-6 mb-2">
+                                        <LazyLoadImage
+                                            src='/AED.png'
+                                            alt="AED"
+                                            className="w-full h-full object-contain"
+                                            effect="opacity"
+                                        />
+                                    </div>
                                     <div className="text-xs text-gray-600 mb-1">
                                         {isGCCVisa ? 'Starting from' : 'Indicative Price'}
                                     </div>
@@ -980,7 +1008,7 @@ const VisaDetail: React.FC = () => {
                                             {selectedVariant?.title || 'Visa'} × {quantity}
                                         </span>
                                         <span className="font-medium">
-                                            {selectedVariant ? formatPrice(selectedVariant.price * quantity) : 0}
+                                            {selectedVariant ? formatPrice(selectedVariant.price * quantity) : formatPrice(0)}
                                         </span>
                                     </div>
                                     {selectedAddons.map(addonId => {
@@ -1065,7 +1093,7 @@ const VisaDetail: React.FC = () => {
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex-1">
                             <div className="text-xs text-gray-600">Total Amount</div>
-                            <div className="text-xl font-bold text-accent">AED {calculateTotal()}</div>
+                            <div className="text-xl font-bold text-accent">{calculateTotal()}</div>
                         </div>
                         <button
                             onClick={() => setShowPolicyModal(true)}

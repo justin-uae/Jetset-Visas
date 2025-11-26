@@ -186,6 +186,7 @@ const visaSlice = createSlice({
             .addCase(fetchVisaByHandle.pending, (state) => {
                 state.loading = true;
                 state.error = null;
+                state.selectedVisa = null;
             })
             .addCase(fetchVisaByHandle.fulfilled, (state, action) => {
                 state.loading = false;
@@ -194,6 +195,7 @@ const visaSlice = createSlice({
             .addCase(fetchVisaByHandle.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
+                state.selectedVisa = null;
             })
             // Search visas
             .addCase(searchVisas.pending, (state) => {

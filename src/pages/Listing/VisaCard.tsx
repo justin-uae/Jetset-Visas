@@ -40,8 +40,18 @@ const VisaCard: React.FC<VisaCardProps> = ({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
 
                 {/* Flag Badge */}
-                <div className="absolute top-4 right-4 w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-lg text-2xl">
-                    {flag}
+                <div className="absolute top-3 right-3 z-10">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-2xl shadow-xl  group-hover:scale-110 group-hover:rotate-12 transition-all duration-300 overflow-hidden">
+                        <LazyLoadImage
+                            src={`https://flagcdn.com/w160/${flag.toLowerCase()}.png`}
+                            alt={`${name} flag`}
+                            className="absolute inset-0 w-full h-full object-cover"
+                            loading="lazy"
+                            onError={(e: any) => {
+                                e.target.style.display = 'none';
+                            }}
+                        />
+                    </div>
                 </div>
 
                 {/* Popular Badge */}
